@@ -1,43 +1,47 @@
 import React, { PureComponent } from 'react';
-import {Line} from 'react-chartjs-2';
+import { Line } from 'react-chartjs-2';
 
 const options = {
-    scales: {
-        xAxes: [{
-            type: 'time',
-            time: {
-                displayFormats: {
-                    quarter: 'MMM YYYY'
-                },
-                unit: 'day'
+  scales: {
+    xAxes: [
+      {
+        type: 'time',
+        time: {
+          displayFormats: {
+            quarter: 'MMM YYYY',
+          },
+          unit: 'day',
+        },
+      },
+    ],
+    yAxes: [
+      {
+        // type: 'logarithmic',
+        ticks: {
+          // stepSize: 100000,
+          callback: function (value) {
+            var ranges = [
+              { divider: 1e6, suffix: 'M' },
+              { divider: 1e3, suffix: 'k' },
+            ];
+            function formatNumber(n) {
+              for (var i = 0; i < ranges.length; i++) {
+                if (n >= ranges[i].divider) {
+                  return (n / ranges[i].divider).toString() + ranges[i].suffix;
+                }
+              }
+              return n;
             }
-        }],
-        yAxes: [{
-          // type: 'logarithmic',
-          ticks: {
-            // stepSize: 100000,
-            callback: function(value) {
-               var ranges = [
-                  { divider: 1e6, suffix: 'M' },
-                  { divider: 1e3, suffix: 'k' }
-               ];
-               function formatNumber(n) {
-                  for (var i = 0; i < ranges.length; i++) {
-                     if (n >= ranges[i].divider) {
-                        return (n / ranges[i].divider).toString() + ranges[i].suffix;
-                     }
-                  }
-                  return n;
-               }
-               return formatNumber(value);
-            }
-         }
-      }]
-    }
-}
+            return formatNumber(value);
+          },
+        },
+      },
+    ],
+  },
+};
 
 const getData = (thisData) => ({
-  labels: thisData.map(row => row.t),
+  labels: thisData.map((row) => row.t),
   datasets: [
     {
       label: 'Confirmed Cases',
@@ -58,7 +62,8 @@ const getData = (thisData) => ({
       pointHoverBorderWidth: 2,
       pointRadius: 1,
       pointHitRadius: 10,
-      data: thisData.map((row) => ({y: row.confirm, x: row.t}))
+      spanGaps: false,
+      data: thisData.map((row) => ({ y: row.confirm, x: row.t })),
     },
     {
       label: 'Deceased',
@@ -79,7 +84,8 @@ const getData = (thisData) => ({
       pointHoverBorderWidth: 2,
       pointRadius: 1,
       pointHitRadius: 10,
-      data: thisData.map((row) => ({y: row.dead, x: row.t}))
+      spanGaps: false,
+      data: thisData.map((row) => ({ y: row.dead, x: row.t })),
     },
     {
       label: 'Active',
@@ -100,8 +106,9 @@ const getData = (thisData) => ({
       pointHoverBorderWidth: 2,
       pointRadius: 1,
       pointHitRadius: 10,
-      data: thisData.map((row) => ({y: row.act, x: row.t})),
-      hidden: true
+      spanGaps: false,
+      data: thisData.map((row) => ({ y: row.act, x: row.t })),
+      hidden: true,
     },
     {
       label: 'Recovered',
@@ -122,31 +129,29 @@ const getData = (thisData) => ({
       pointHoverBorderWidth: 2,
       pointRadius: 1,
       pointHitRadius: 10,
-      data: thisData.map((row) => ({y: row.rec, x: row.t})),
-      hidden: true
+      spanGaps: false,
+      data: thisData.map((row) => ({ y: row.rec, x: row.t })),
+      hidden: true,
     },
-  ]
+  ],
 });
 
 export default class GraphData extends PureComponent {
-
   // constructor(props) {
   //   super(props);
   //   // this.state = initialState;
   // }
 
   render() {
-    const { series } = this.props
-    const thisData = series.map(row => {
-      return { ...row, t: new Date(row.day) }
-    })
+    const { series } = this.props;
+    const thisData = series.map((row) => {
+      return { ...row, t: new Date(row.day) };
+    });
 
-    console.log('series', series)
+    console.log('series', series);
 
-    const data = getData(thisData)
+    const data = getData(thisData);
 
-    return (
-      <Line data={data} options={options} />
-    );
+    return <Line data={data} options={options} />;
   }
 }

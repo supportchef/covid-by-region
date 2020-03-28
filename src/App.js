@@ -5,9 +5,7 @@ import RegionSelect from './RegionSelect';
 function App() {
   return (
     <div className="App">
-      <header className="App-header">
-        Select Country
-      </header>
+      <header className="App-header">Select Country</header>
       <RegionSelect />
     </div>
   );
