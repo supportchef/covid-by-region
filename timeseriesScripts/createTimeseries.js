@@ -1,15 +1,11 @@
 const fs = require('fs');
 const csv = require('csv-parser')
+const {countryMapping, stateMapping} = require('./nameMapping')
 
 const rawDataPath = '../COVID-19/csse_covid_19_data/csse_covid_19_daily_reports'
 const timeseriesDataLocation = `../src/timeseriesData/`
 const joinChar = '$'
 
-const countryMapping = {
-  'Mainland China' : 'China',
-  'Iran (Islamic Republic of)': 'Iran',
-  'Unassigned Location (From Diamond Princess)': 'Diamond Princess',
-}
 
 // Structure
 // data: {
@@ -32,9 +28,22 @@ const getPrimaryKey = (dataRow) => {
     Province_State = dataRow['Province/State']
     Country_Region = dataRow['Country/Region']
   }
+
+  if (!Admin2 && Province_State && Province_State.includes(', ')) {
+    [Admin2, Province_State] = Province_State.split(', ')
+  }
+
   if (Country_Region in countryMapping) {
     Country_Region = countryMapping[Country_Region]
   }
+  if (Province_State in stateMapping) {
+    Province_State = stateMapping[Province_State]
+  }
+
+  if (Admin2 && Admin2.endsWith('County')) {
+    Admin2 = Admin2.replace(' County', '')
+  }
+
   const pkArray = [Country_Region, Province_State, Admin2]
   return pkArray.filter((row) => !!row).join(joinChar)
 }

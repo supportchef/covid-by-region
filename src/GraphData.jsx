@@ -1,20 +1,5 @@
 import React, { PureComponent } from 'react';
 import {Line} from 'react-chartjs-2';
-// import moment from 'moment'
-
-// import mainData from './timeseriesData/index'
-// import mainData from './timeseriesData/US$California'
-
-// const rawData = mainData['US$California'].series;
-// const rawData = mainData[''].series;
-
-// const dataWithDates = rawData.map(row => {
-//   return { ...row, t: new Date(row.day) }
-// }).sort((a, b) => b.t - a.t)
-
-// const dates = dataWithDates.map(row => row.t)
-
-// console.log('dates', dates)
 
 const options = {
     scales: {
@@ -23,11 +8,13 @@ const options = {
             time: {
                 displayFormats: {
                     quarter: 'MMM YYYY'
-                }
+                },
+                unit: 'day'
             }
         }],
         yAxes: [{
-         ticks: {
+          // type: 'logarithmic',
+          ticks: {
             // stepSize: 100000,
             callback: function(value) {
                var ranges = [
