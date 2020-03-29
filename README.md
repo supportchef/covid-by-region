@@ -1,7 +1,6 @@
 <div align="center">
     <a href="https://www.covidbyregion.com" align="center">
-        <img src="https://github.com/supportchef/covid-by-region/blob/master/src/assets/Covid-by-region.svg" width="450"></br>
-        Click for live site.
+        <img src="https://github.com/supportchef/covid-by-region/blob/master/src/assets/Covid-by-region.svg" width="450"></br>Click for live site.
     </a>
 </div>
 
