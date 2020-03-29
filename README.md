@@ -1,8 +1,9 @@
-<p align="center">
-    <img src="https://raw.githubusercontent.com/supportchef/covid-by-region/master/src/assets/Covid-by-region.svg"><br/>
-</p>
-
-[Online website is here.](https://www.covidbyregion.com)
+<div align="center">
+    <a href="https://www.covidbyregion.com" align="center">
+        <img src="https://github.com/supportchef/covid-by-region/blob/master/src/assets/Covid-by-region.svg" width="450"></br>
+        Click for live site.
+    </a>
+</div>
 
 This website allows you to plot the spread of [SARS-COV-2](https://en.wikipedia.org/wiki/Severe_acute_respiratory_syndrome_coronavirus_2) (through cases of COVID-19) by region, shown over time. Including comparing different regions.
 
