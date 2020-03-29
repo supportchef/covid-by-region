@@ -51,7 +51,7 @@ export const ColorSwatch = styled.div`
   margin-top: 1px;
 `;
 export const EmptyText = styled.div`
-  margin: auto;
+  margin: ${({ showSingleColor }) => (showSingleColor ? 'auto' : '-6px')} auto;
   color: grey;
 `;
 
@@ -70,7 +70,9 @@ class SelectedSeries extends Component {
       return (
         <SeriesRowContainer>
           <SeriesRow>
-            <EmptyText>Selected data is already pinned</EmptyText>
+            <EmptyText showSingleColor={showSingleColor}>
+              Selected data is already pinned
+            </EmptyText>
           </SeriesRow>
         </SeriesRowContainer>
       );
@@ -88,16 +90,17 @@ class SelectedSeries extends Component {
           <ColorContainer>
             <ColorRow>
               <ColorSwatch color={seriesInfo.color.confirm} />
-              Confirmed
+              {showSingleColor ? 'Color' : 'Confirmed'}
             </ColorRow>
+            {!showSingleColor && (
+              <ColorRow>
+                <ColorSwatch color={deadColor} />
+                Deceased
+              </ColorRow>
+            )}
           </ColorContainer>
           <div>{name}</div>
-          <ColorContainer>
-            <ColorRow>
-              Deceased
-              <ColorSwatch color={deadColor} />
-            </ColorRow>
-          </ColorContainer>
+          <div>▼</div>
           <SideContainer>
             <Checkbox
               checked={isPinned}

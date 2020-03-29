@@ -23,6 +23,10 @@ const importRegion = (reg) => {
   });
 };
 
+export const BoxedContainer = styled.div`
+  // background: white;
+`;
+
 export const RegionContainer = styled.div`
   display: flex;
   justify-content: center;
@@ -33,6 +37,8 @@ export const CurrentDisplayInfo = styled.div`
   display: flex;
   justify-content: center;
   flex-direction: column;
+  background: white;
+  border-radius: 5px;
 `;
 
 export const GraphContainer = styled.div`
@@ -141,7 +147,9 @@ class RegionSelect extends Component {
     const seriesKey = mergeKeys(country, state, county);
     // console.log('seriesKey', seriesKey);
 
-    const showSingleColor = pinnedKeys.size > 1;
+    const newSelectedSeries = !pinnedKeys.has(seriesKey);
+    const showSingleColor =
+      pinnedKeys.size > 1 || (pinnedKeys.size === 1 && newSelectedSeries);
 
     // console.log('pinnedKeys.entries()', pinnedKeys.entries());
     const viewedSeries = [
@@ -158,7 +166,7 @@ class RegionSelect extends Component {
     ));
 
     const pinnedGraphInfo = [...pinnedKeys.entries()];
-    if (!pinnedKeys.has(seriesKey)) {
+    if (newSelectedSeries) {
       viewedSeries.push(
         <SelectedSeries
           key={seriesKey}
@@ -171,41 +179,45 @@ class RegionSelect extends Component {
 
       pinnedGraphInfo.push([seriesKey, defaultSeriesInfo]);
     } else {
-      viewedSeries.push(<SelectedSeries empty />);
+      viewedSeries.push(
+        <SelectedSeries empty showSingleColor={showSingleColor} />
+      );
     }
 
     return (
       <div>
-        <GraphContainer>
-          <SingleGraphContainer>
-            Confirmed Cases
-            <LogSwitchButton onClick={this.flipLog}>
-              {isLog ? 'Switch to Linear' : 'Switch to Log'}
-            </LogSwitchButton>
-            <SingleGraph className="chart-container">
-              <GraphData
-                fieldName="confirm"
-                allData={allData}
-                seriesInfo={pinnedGraphInfo}
-                isLog={isLog}
-                showSingleColor={showSingleColor}
-              />
-            </SingleGraph>
-          </SingleGraphContainer>
-          <SingleGraphContainer>
-            Deceased
-            <SingleGraph className="chart-container">
-              <GraphData
-                fieldName="dead"
-                allData={allData}
-                seriesInfo={pinnedGraphInfo}
-                isLog={isLog}
-                showSingleColor={showSingleColor}
-              />
-            </SingleGraph>
-          </SingleGraphContainer>
-        </GraphContainer>
-        <CurrentDisplayInfo>{viewedSeries}</CurrentDisplayInfo>
+        <BoxedContainer>
+          <GraphContainer>
+            <SingleGraphContainer>
+              Confirmed Cases
+              <LogSwitchButton onClick={this.flipLog}>
+                {isLog ? 'Switch to Linear' : 'Switch to Log'}
+              </LogSwitchButton>
+              <SingleGraph className="chart-container">
+                <GraphData
+                  fieldName="confirm"
+                  allData={allData}
+                  seriesInfo={pinnedGraphInfo}
+                  isLog={isLog}
+                  showSingleColor={showSingleColor}
+                />
+              </SingleGraph>
+            </SingleGraphContainer>
+            <SingleGraphContainer>
+              Deceased
+              <SingleGraph className="chart-container">
+                <GraphData
+                  fieldName="dead"
+                  allData={allData}
+                  seriesInfo={pinnedGraphInfo}
+                  isLog={isLog}
+                  showSingleColor={showSingleColor}
+                />
+              </SingleGraph>
+            </SingleGraphContainer>
+          </GraphContainer>
+          <CurrentDisplayInfo>{viewedSeries}</CurrentDisplayInfo>
+        </BoxedContainer>
         <RegionContainer>
           <RegionColumn
             allData={allData}

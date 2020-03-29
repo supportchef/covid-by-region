@@ -5,6 +5,7 @@ exports.countryMapping = {
   'Republic of Korea': 'South Korea',
   'Saint Vincent and the Grenadines': 'Saint Vincent & Grenadines',
   'Bosnia and Herzegovina': 'Bosnia & Herzegovina',
+  'Russian Federation': 'Russia',
 };
 
 exports.stateMapping = {
