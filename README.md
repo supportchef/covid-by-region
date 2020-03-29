@@ -1,4 +1,6 @@
-# Covid by Region
+<p align="center">
+    <img src="https://raw.githubusercontent.com/supportchef/covid-by-region/master/src/assets/Covid-by-region.svg"><br/>
+</p>
 
 [Online website is here.](https://www.covidbyregion.com)
 
