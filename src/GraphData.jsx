@@ -38,100 +38,36 @@ const options = {
       },
     ],
   },
+  legend: {
+    display: false,
+    position: 'bottom',
+  },
 };
 
-const getData = (thisData) => ({
+const getData = (thisData, label, fieldName, rgb) => ({
   labels: thisData.map((row) => row.t),
   datasets: [
     {
-      label: 'Confirmed Cases',
+      label: label,
       fill: false,
       lineTension: 0.1,
-      backgroundColor: 'rgba(75,192,192,0.4)',
-      borderColor: 'rgba(75,192,192,1)',
+      backgroundColor: `rgba(${rgb},.4)`,
+      borderColor: `rgba(${rgb},1)`,
       borderCapStyle: 'butt',
       borderDash: [],
       borderDashOffset: 0.0,
       borderJoinStyle: 'miter',
-      pointBorderColor: 'rgba(75,192,192,1)',
+      pointBorderColor: `rgba(${rgb},1)`,
       pointBackgroundColor: '#fff',
       pointBorderWidth: 1,
       pointHoverRadius: 5,
-      pointHoverBackgroundColor: 'rgba(75,192,192,1)',
-      pointHoverBorderColor: 'rgba(220,220,220,1)',
+      pointHoverBackgroundColor: `rgba(${rgb},1)`,
+      pointHoverBorderColor: `rgba(${rgb},1)`,
       pointHoverBorderWidth: 2,
       pointRadius: 1,
       pointHitRadius: 10,
       spanGaps: false,
-      data: thisData.map((row) => ({ y: row.confirm, x: row.t })),
-    },
-    {
-      label: 'Deceased',
-      fill: false,
-      lineTension: 0.1,
-      backgroundColor: 'rgba(255, 99, 132,0.4)',
-      borderColor: 'rgba(255, 99, 132,1)',
-      borderCapStyle: 'butt',
-      borderDash: [],
-      borderDashOffset: 0.0,
-      borderJoinStyle: 'miter',
-      pointBorderColor: 'rgba(255, 99, 132,1)',
-      pointBackgroundColor: '#fff',
-      pointBorderWidth: 1,
-      pointHoverRadius: 5,
-      pointHoverBackgroundColor: 'rgba(255, 99, 132,1)',
-      pointHoverBorderColor: 'rgba(220,220,220,1)',
-      pointHoverBorderWidth: 2,
-      pointRadius: 1,
-      pointHitRadius: 10,
-      spanGaps: false,
-      data: thisData.map((row) => ({ y: row.dead, x: row.t })),
-    },
-    {
-      label: 'Active',
-      fill: false,
-      lineTension: 0.1,
-      backgroundColor: 'rgba(247,239,153,0.4)',
-      borderColor: 'rgba(247,239,153,1)',
-      borderCapStyle: 'butt',
-      borderDash: [],
-      borderDashOffset: 0.0,
-      borderJoinStyle: 'miter',
-      pointBorderColor: 'rgba(247,239,153,1)',
-      pointBackgroundColor: '#fff',
-      pointBorderWidth: 1,
-      pointHoverRadius: 5,
-      pointHoverBackgroundColor: 'rgba(247,239,153,1)',
-      pointHoverBorderColor: 'rgba(220,220,220,1)',
-      pointHoverBorderWidth: 2,
-      pointRadius: 1,
-      pointHitRadius: 10,
-      spanGaps: false,
-      data: thisData.map((row) => ({ y: row.act, x: row.t })),
-      hidden: true,
-    },
-    {
-      label: 'Recovered',
-      fill: false,
-      lineTension: 0.1,
-      backgroundColor: 'rgba(171,225,136,0.4)',
-      borderColor: 'rgba(171,225,136,1)',
-      borderCapStyle: 'butt',
-      borderDash: [],
-      borderDashOffset: 0.0,
-      borderJoinStyle: 'miter',
-      pointBorderColor: 'rgba(171,225,136,1)',
-      pointBackgroundColor: '#fff',
-      pointBorderWidth: 1,
-      pointHoverRadius: 5,
-      pointHoverBackgroundColor: 'rgba(171,225,136,1)',
-      pointHoverBorderColor: 'rgba(220,220,220,1)',
-      pointHoverBorderWidth: 2,
-      pointRadius: 1,
-      pointHitRadius: 10,
-      spanGaps: false,
-      data: thisData.map((row) => ({ y: row.rec, x: row.t })),
-      hidden: true,
+      data: thisData.map((row) => ({ y: row[fieldName], x: row.t })),
     },
   ],
 });
@@ -143,14 +79,14 @@ export default class GraphData extends PureComponent {
   // }
 
   render() {
-    const { series } = this.props;
+    const { series, label, fieldName, rgb } = this.props;
     const thisData = series.map((row) => {
       return { ...row, t: new Date(row.day) };
     });
 
     console.log('series', series);
 
-    const data = getData(thisData);
+    const data = getData(thisData, label, fieldName, rgb);
 
     return <Line data={data} options={options} />;
   }

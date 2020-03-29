@@ -28,10 +28,10 @@ export const RegionContainer = styled.div`
 `;
 
 export const GraphContainer = styled.div`
-  height: 50vh;
+  // height: 50vh;
   display: flex;
   justify-content: center;
-  height: 40vh;
+  // height: 40vh;
 `;
 
 export const SingleGraph = styled.div`
@@ -86,13 +86,25 @@ class RegionSelect extends Component {
       <div>
         <GraphContainer>
           <SingleGraphContainer>
+            Confirmed Cases
             <SingleGraph className="chart-container">
-              <GraphData series={allData[seriesKey].series} />
+              <GraphData
+                series={allData[seriesKey].series}
+                label=""
+                fieldName="confirm"
+                rgb="75,192,192"
+              />
             </SingleGraph>
           </SingleGraphContainer>
           <SingleGraphContainer>
+            Deceased
             <SingleGraph className="chart-container">
-              <GraphData series={allData[seriesKey].series} />
+              <GraphData
+                series={allData[seriesKey].series}
+                label=""
+                fieldName="dead"
+                rgb="255,99,132"
+              />
             </SingleGraph>
           </SingleGraphContainer>
         </GraphContainer>
