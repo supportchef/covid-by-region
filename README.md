@@ -1,12 +1,12 @@
-<div align="center">
+<p align="center">
     <a href="https://www.covidbyregion.com" align="center">
-        <img src="https://github.com/supportchef/covid-by-region/blob/master/src/assets/Covid-by-region.svg" width="450"></br>Click for live site.
+        <img src="https://github.com/supportchef/covid-by-region/blob/master/src/assets/Covid-by-region.svg" width="450"><br/>Link to website
     </a>
-</div>
+</p>
 
-This website allows you to plot the spread of [SARS-COV-2](https://en.wikipedia.org/wiki/Severe_acute_respiratory_syndrome_coronavirus_2) (through cases of COVID-19) by region, shown over time. Including comparing different regions.
+This website plots cases of COVID-19 by region and across regions over time.
 
-The data is currently sourced only from the [John Hopkins data set](https://github.com/CSSEGISandData/COVID-19/), and is [updated periodically](#updating-dataset).
+The data is currently sourced from the [John Hopkins data set](https://github.com/CSSEGISandData/COVID-19/), and is [updated periodically](#updating-dataset).
 
 ## Cloning the repo
 
