@@ -22,10 +22,26 @@ const joinChar = '$';
 //   }
 // }
 
+// String.prototype.hexEncode = function () {
+//   var hex, i;
+
+//   var result = '';
+//   for (i = 0; i < this.length; i++) {
+//     hex = this.charCodeAt(i).toString(16);
+//     result += ('000' + hex).slice(-4);
+//   }
+
+//   return result;
+// };
+
 const getPrimaryKey = (dataRow) => {
   let { Country_Region, Province_State, Admin2 } = dataRow;
   if (!Province_State) {
-    Province_State = dataRow['Province/State'];
+    // March 13th adds a zero width no break space.
+    Province_State =
+      dataRow['Province/State'] || dataRow['\uFEFFProvince/State'];
+  }
+  if (!Country_Region) {
     Country_Region = dataRow['Country/Region'];
   }
 
@@ -91,6 +107,11 @@ const addDataToSpecificRegion = (allTimeseries, key, dataRow, day) => {
   const rowFound = allTimeseries[key].series.findIndex(
     (row) => row.day === day
   );
+
+  // if (day === '03-13-2020') {
+  //   console.log('key', key, 'rowFound', rowFound);
+  // }
+
   if (rowFound === -1) {
     allTimeseries[key].series.push({
       confirm,
@@ -115,6 +136,19 @@ const addDataToSpecificRegion = (allTimeseries, key, dataRow, day) => {
 
 const addDataToTimeseries = (allTimeseries, dataRow, day) => {
   const primaryKey = getPrimaryKey(dataRow);
+  // if (day === '03-13-2020') {
+  //   console.log(
+  //     'primaryKey',
+  //     primaryKey,
+  //     'state',
+  //     dataRow['\uFEFFrovince/State']
+  //   );
+  //   const proposed = '\uFEFFProvince/State';
+  //   console.log(proposed, proposed.hexEncode());
+  //   Object.keys(dataRow).forEach((str) => {
+  //     console.log(str, str.hexEncode());
+  //   });
+  // }
   addRegionToAllData(allTimeseries, primaryKey, []);
   addDataToSpecificRegion(allTimeseries, primaryKey, dataRow, day);
 };
@@ -123,7 +157,7 @@ const addDataToTimeseries = (allTimeseries, dataRow, day) => {
 const rawDataDates = fs.readdirSync(rawDataPath);
 
 const onlyDates = rawDataDates.filter((fileName) => fileName.endsWith('.csv'));
-// console.log(onlyDates)
+console.log(onlyDates);
 
 const allTimeseries = {};
 
@@ -134,7 +168,9 @@ const dateCreatePromises = onlyDates.map((singleDateFile) => {
     fs.createReadStream(readFilePath)
       .pipe(csv())
       .on('data', (dataRow) => {
-        // console.log(dataRow)
+        // if (dateSegment === '03-13-2020') {
+        //   console.log(dataRow);
+        // }
         addDataToTimeseries(allTimeseries, dataRow, dateSegment);
       })
       .on('end', () => {

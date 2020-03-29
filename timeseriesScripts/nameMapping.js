@@ -3,6 +3,8 @@ exports.countryMapping = {
   'Iran (Islamic Republic of)': 'Iran',
   'Korea, South': 'South Korea',
   'Republic of Korea': 'South Korea',
+  'Saint Vincent and the Grenadines': 'Saint Vincent & Grenadines',
+  'Bosnia and Herzegovina': 'Bosnia & Herzegovina',
 };
 
 exports.stateMapping = {

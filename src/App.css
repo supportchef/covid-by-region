@@ -3,6 +3,9 @@
 }
 
 .App-header {
+  font-size: larger;
+  margin-top: 20px;
+  margin-bottom: 10px;
 }
 
 .App-link {

@@ -3,7 +3,7 @@
 import { css, jsx } from '@emotion/core';
 import styled from '@emotion/styled';
 import React, { Component } from 'react';
-import { mergeKeys, getLatest } from './dataLib';
+import { mergeKeys, getLatest, formatNumber } from './dataLib';
 
 // eslint-disable-next-line
 jsx;
@@ -21,24 +21,50 @@ const theAllRegion = (allData) => {
   return { ...latestData, sub: '' };
 };
 
-export const SelectColumn = styled.div`
-  height: 30vh;
+const SelectColumn = styled.div`
+  height: 50vh;
+  width: 200px;
   overflow: scroll;
 `;
-export const Region = styled.div`
-  background: ${({ selected }) => (selected ? 'grey' : 'white')};
+const Region = styled.div`
+  background: ${({ selected }) => (selected ? '#c5c5c5' : 'white')};
+  cursor: pointer;
+  user-select: none;
+  padding-left: 8px;
+  display: flex;
+  justify-content: space-between;
+`;
+const MainText = styled.span``;
+const CaseNumbers = styled.span`
+  color: grey;
+  display: flex;
+  align-items: center;
+`;
+const Caret = styled.span`
+  display: inline-block;
+  color: #3a3a3a;
+  width: 10px;
+  margin: 0px 3px;
+  font-size: 12px;
 `;
 
 class RegionSelect extends Component {
   render() {
-    const { allData, dataKey, onRegionClick, selected, showAll } = this.props;
+    const {
+      allData,
+      dataKey,
+      onRegionClick,
+      doubleClick,
+      selected,
+      showAll,
+    } = this.props;
 
     if (!showAll && dataKey === '') {
-      return <div></div>;
+      return <SelectColumn></SelectColumn>;
     }
 
     if (!allData[dataKey]) {
-      return <div>Loading {dataKey}</div>;
+      return <SelectColumn>Loading {dataKey}</SelectColumn>;
     }
     const regionSubs = allData[dataKey].subs;
 
@@ -52,22 +78,40 @@ class RegionSelect extends Component {
 
     const allRegion = showAll && theAllRegion(allData);
 
+    const hasChildren = (sub) => {
+      const foundRegion = allData[mergeKeys(dataKey, sub)];
+      if (foundRegion) {
+        return foundRegion.subs.length > 0;
+      }
+      return false;
+    };
+
     return (
       <SelectColumn>
         {showAll && (
           <Region
             onClick={onRegionClick(allRegion.sub)}
+            onDoubleClick={doubleClick}
             selected={selected === ''}
           >
-            All - {allRegion.confirm}
+            <MainText>All</MainText>
+            <CaseNumbers>
+              {formatNumber(allRegion.confirm)}
+              <Caret />
+            </CaseNumbers>
           </Region>
         )}
         {sortedRegions.map((region) => (
           <Region
             onClick={onRegionClick(region.sub)}
+            onDoubleClick={doubleClick}
             selected={selected === region.sub}
           >
-            {region.sub} - {region.confirm}
+            <MainText>{region.sub}</MainText>
+            <CaseNumbers>
+              {formatNumber(region.confirm)}
+              <Caret>{hasChildren(region.sub) ? '▶' : ''}</Caret>
+            </CaseNumbers>
           </Region>
         ))}
       </SelectColumn>

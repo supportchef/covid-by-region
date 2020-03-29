@@ -5,7 +5,8 @@ import styled from '@emotion/styled';
 import React, { Component } from 'react';
 import RegionColumn from './RegionColumn';
 import GraphData from './GraphData';
-import { mergeKeys } from './dataLib';
+import SelectedSeries from './SelectedSeries';
+import { mergeKeys, generateNewColors } from './dataLib';
 
 import mainData from './timeseriesData/index';
 
@@ -25,6 +26,13 @@ const importRegion = (reg) => {
 export const RegionContainer = styled.div`
   display: flex;
   justify-content: center;
+  margin-top: 8px;
+`;
+
+export const CurrentDisplayInfo = styled.div`
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
 `;
 
 export const GraphContainer = styled.div`
@@ -42,7 +50,16 @@ export const SingleGraph = styled.div`
   width: 45vw;
 `;
 
-export const SingleGraphContainer = styled.div``;
+export const SingleGraphContainer = styled.div`
+  position: relative;
+`;
+
+export const LogSwitchButton = styled.span`
+  position: absolute;
+  left: 0;
+  font-size: 10px;
+  cursor: pointer;
+`;
 
 class RegionSelect extends Component {
   constructor(props) {
@@ -51,6 +68,15 @@ class RegionSelect extends Component {
       country: '',
       stateId: '',
       county: '',
+      pinnedKeys: new Map(),
+      isLog: false,
+      defaultSeriesInfo: {
+        color: {
+          index: 1,
+          confirm: '75,192,192',
+          dead: '255,99,132',
+        },
+      },
     };
   }
 
@@ -75,24 +101,94 @@ class RegionSelect extends Component {
     this.setState({ county: reg });
   };
 
+  pinKeyToggle = (key, val) => {
+    this.setState(({ pinnedKeys, defaultSeriesInfo }) => {
+      const newPinnedKeys = new Map(pinnedKeys);
+      const returnPayload = { pinnedKeys: newPinnedKeys };
+      if (pinnedKeys.has(key)) {
+        // const { [key]: _, ...newPinned } = pinnedKeys;
+        newPinnedKeys.delete(key);
+      } else {
+        newPinnedKeys.set(key, defaultSeriesInfo);
+        const allColors = [...newPinnedKeys.values()].map(
+          (seriesInfo) => seriesInfo.color
+        );
+        returnPayload.defaultSeriesInfo = {
+          color: generateNewColors(allColors),
+        };
+      }
+      return returnPayload;
+    });
+  };
+
+  flipLog = () => {
+    this.setState(({ isLog }) => ({
+      isLog: !isLog,
+    }));
+  };
+
   render() {
-    const { country, state, county } = this.state;
+    const {
+      country,
+      state,
+      county,
+      pinnedKeys,
+      defaultSeriesInfo,
+      isLog,
+    } = this.state;
 
     const stateId = state ? mergeKeys(country, state) : '';
     const seriesKey = mergeKeys(country, state, county);
-    console.log('seriesKey', seriesKey);
+    // console.log('seriesKey', seriesKey);
+
+    const showSingleColor = pinnedKeys.size > 1;
+
+    // console.log('pinnedKeys.entries()', pinnedKeys.entries());
+    const viewedSeries = [
+      ...pinnedKeys.entries(),
+    ].map(([seriesKey, seriesInfo]) => (
+      <SelectedSeries
+        key={seriesKey}
+        seriesKey={seriesKey}
+        isPinned
+        pinKeyToggle={this.pinKeyToggle}
+        seriesInfo={seriesInfo}
+        showSingleColor={showSingleColor}
+      />
+    ));
+
+    const pinnedGraphInfo = [...pinnedKeys.entries()];
+    if (!pinnedKeys.has(seriesKey)) {
+      viewedSeries.push(
+        <SelectedSeries
+          key={seriesKey}
+          seriesKey={seriesKey}
+          seriesInfo={defaultSeriesInfo}
+          pinKeyToggle={this.pinKeyToggle}
+          showSingleColor={showSingleColor}
+        />
+      );
+
+      pinnedGraphInfo.push([seriesKey, defaultSeriesInfo]);
+    } else {
+      viewedSeries.push(<SelectedSeries empty />);
+    }
 
     return (
       <div>
         <GraphContainer>
           <SingleGraphContainer>
             Confirmed Cases
+            <LogSwitchButton onClick={this.flipLog}>
+              {isLog ? 'Switch to Linear' : 'Switch to Log'}
+            </LogSwitchButton>
             <SingleGraph className="chart-container">
               <GraphData
-                series={allData[seriesKey].series}
-                label=""
                 fieldName="confirm"
-                rgb="75,192,192"
+                allData={allData}
+                seriesInfo={pinnedGraphInfo}
+                isLog={isLog}
+                showSingleColor={showSingleColor}
               />
             </SingleGraph>
           </SingleGraphContainer>
@@ -100,14 +196,16 @@ class RegionSelect extends Component {
             Deceased
             <SingleGraph className="chart-container">
               <GraphData
-                series={allData[seriesKey].series}
-                label=""
                 fieldName="dead"
-                rgb="255,99,132"
+                allData={allData}
+                seriesInfo={pinnedGraphInfo}
+                isLog={isLog}
+                showSingleColor={showSingleColor}
               />
             </SingleGraph>
           </SingleGraphContainer>
         </GraphContainer>
+        <CurrentDisplayInfo>{viewedSeries}</CurrentDisplayInfo>
         <RegionContainer>
           <RegionColumn
             allData={allData}
@@ -115,18 +213,21 @@ class RegionSelect extends Component {
             dataKey=""
             showAll
             onRegionClick={this.clickCountry}
+            doubleClick={() => this.pinKeyToggle(seriesKey)}
           />
           <RegionColumn
             allData={allData}
             selected={state}
             dataKey={country}
             onRegionClick={this.clickState}
+            doubleClick={() => this.pinKeyToggle(seriesKey)}
           />
           <RegionColumn
             allData={allData}
             selected={county}
             dataKey={stateId}
             onRegionClick={this.clickCounty}
+            doubleClick={() => this.pinKeyToggle(seriesKey)}
           />
         </RegionContainer>
       </div>
