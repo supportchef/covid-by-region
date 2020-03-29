@@ -41,9 +41,11 @@ Currently the dataset is updating manually by running the following periodically
     git submodule update --remote
     npm run prebuild
 
+_Note: The deployed website can be newer than the pinned git hash of the John Hopkins submodule_
+
 ## Contributions
 
-Open to contributions. If you are adding a fewture that requires more/new data, it must both:
+Open to contributions. If you are adding a feature that requires more/new data, it must both:
 
 - Come from a reputable source
 - Have an automatable mechanism that can fetch the latest data

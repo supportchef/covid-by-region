@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="1344px" height="472px" viewBox="0 0 1344 472" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 54.1 (76490) - https://sketchapp.com -->
+    <title>Covid by region</title>
+    <desc>Created with Sketch.</desc>
+    <g id="Covid-by-region" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <text id="COVID-19" font-family="Nunito-ExtraBold, Nunito" font-size="252" font-weight="600" fill="#424242">
+            <tspan x="50.108" y="244.75">COVID-19</tspan>
+        </text>
+        <text id="by-region" font-family="Nunito-SemiBold, Nunito" font-size="187" font-weight="500" fill="#424242">
+            <tspan x="269.4055" y="395.25">by region</tspan>
+        </text>
+    </g>
+</svg>
