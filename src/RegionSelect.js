@@ -6,6 +6,7 @@ import React, { Component } from 'react';
 import RegionColumn from './RegionColumn';
 import GraphData from './GraphData';
 import SelectedSeries from './SelectedSeries';
+import GraphSettings from './GraphSettings';
 import { mergeKeys, generateNewColors } from './dataLib';
 
 import mainData from './timeseriesData/index';
@@ -216,6 +217,7 @@ class RegionSelect extends Component {
               </SingleGraph>
             </SingleGraphContainer>
           </GraphContainer>
+          <GraphSettings />
           <CurrentDisplayInfo>{viewedSeries}</CurrentDisplayInfo>
         </BoxedContainer>
         <RegionContainer>

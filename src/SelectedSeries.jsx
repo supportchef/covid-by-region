@@ -36,6 +36,7 @@ export const SideContainer = styled.div`
 export const ColorContainer = styled.div`
   display: flex;
   flex-direction: column;
+  width: 75px;
 `;
 export const ColorRow = styled.div`
   display: flex;
@@ -53,6 +54,9 @@ export const ColorSwatch = styled.div`
 export const EmptyText = styled.div`
   margin: ${({ showSingleColor }) => (showSingleColor ? 'auto' : '-6px')} auto;
   color: grey;
+`;
+export const RightContainer = styled.div`
+  width: 75px;
 `;
 
 class SelectedSeries extends Component {
@@ -100,8 +104,9 @@ class SelectedSeries extends Component {
             )}
           </ColorContainer>
           <div>{name}</div>
-          <div>▼</div>
-          <SideContainer>
+          {/*<div>▼</div>*/}
+          {/*<SideContainer>*/}
+          <RightContainer>
             <Checkbox
               checked={isPinned}
               disabled={false}
@@ -109,7 +114,8 @@ class SelectedSeries extends Component {
             >
               Pin
             </Checkbox>
-          </SideContainer>
+          </RightContainer>
+          {/*</SideContainer>*/}
         </SeriesRow>
       </SeriesRowContainer>
     );
