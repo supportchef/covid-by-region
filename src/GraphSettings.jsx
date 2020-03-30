@@ -136,7 +136,7 @@ class GraphSettings extends Component {
               </StartNumCasesContainer>
               <Form.Item>
                 <Checkbox checked={isLog} onChange={() => flipLog && flipLog()}>
-                  Logarithim scaled Y axis enabled
+                  Logarithm scaled Y axis enabled
                 </Checkbox>
               </Form.Item>
               <Form.Item>
