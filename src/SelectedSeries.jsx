@@ -49,7 +49,7 @@ export const ColorSwatch = styled.div`
   width: 10px;
   height: 10px;
   margin: 0px 2px;
-  margin-top: 1px;
+  // margin-top: 1px;
 `;
 export const EmptyText = styled.div`
   margin: ${({ showSingleColor }) => (showSingleColor ? 'auto' : '-6px')} auto;

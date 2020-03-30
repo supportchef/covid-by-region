@@ -57,6 +57,7 @@ class RegionSelect extends Component {
       doubleClick,
       selected,
       showAll,
+      showJhu,
     } = this.props;
 
     if (!showAll && dataKey === '') {
@@ -86,6 +87,13 @@ class RegionSelect extends Component {
       return false;
     };
 
+    let filteredRegions = sortedRegions;
+    if (!showJhu) {
+      filteredRegions = sortedRegions.filter(
+        (region) => region.sub !== 'US (JHU)'
+      );
+    }
+
     return (
       <SelectColumn>
         {showAll && (
@@ -101,7 +109,7 @@ class RegionSelect extends Component {
             </CaseNumbers>
           </Region>
         )}
-        {sortedRegions.map((region) => (
+        {filteredRegions.map((region) => (
           <Region
             onClick={onRegionClick(region.sub)}
             onDoubleClick={doubleClick}

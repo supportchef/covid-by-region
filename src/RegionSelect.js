@@ -77,6 +77,8 @@ class RegionSelect extends Component {
       county: '',
       pinnedKeys: new Map(),
       isLog: false,
+      showJhu: false,
+      startDate: null,
       defaultSeriesInfo: {
         color: {
           index: 1,
@@ -134,6 +136,16 @@ class RegionSelect extends Component {
     }));
   };
 
+  flipJhu = () => {
+    this.setState(({ showJhu }) => ({
+      showJhu: !showJhu,
+    }));
+  };
+
+  changeStartDate = (startDate) => {
+    this.setState({ startDate });
+  };
+
   render() {
     const {
       country,
@@ -142,11 +154,13 @@ class RegionSelect extends Component {
       pinnedKeys,
       defaultSeriesInfo,
       isLog,
+      showJhu,
+      startDate,
     } = this.state;
 
     const stateId = state ? mergeKeys(country, state) : '';
     const seriesKey = mergeKeys(country, state, county);
-    // console.log('seriesKey', seriesKey);
+    console.log('seriesKey', seriesKey);
 
     const newSelectedSeries = !pinnedKeys.has(seriesKey);
     const showSingleColor =
@@ -185,6 +199,14 @@ class RegionSelect extends Component {
       );
     }
 
+    const commonGraphData = {
+      allData,
+      seriesInfo: pinnedGraphInfo,
+      isLog,
+      showSingleColor,
+      startDate,
+    };
+
     return (
       <div>
         <BoxedContainer>
@@ -195,29 +217,24 @@ class RegionSelect extends Component {
                 {isLog ? 'Switch to Linear' : 'Switch to Log'}
               </LogSwitchButton>
               <SingleGraph className="chart-container">
-                <GraphData
-                  fieldName="confirm"
-                  allData={allData}
-                  seriesInfo={pinnedGraphInfo}
-                  isLog={isLog}
-                  showSingleColor={showSingleColor}
-                />
+                <GraphData fieldName="confirm" {...commonGraphData} />
               </SingleGraph>
             </SingleGraphContainer>
             <SingleGraphContainer>
               Deceased
               <SingleGraph className="chart-container">
-                <GraphData
-                  fieldName="dead"
-                  allData={allData}
-                  seriesInfo={pinnedGraphInfo}
-                  isLog={isLog}
-                  showSingleColor={showSingleColor}
-                />
+                <GraphData fieldName="dead" {...commonGraphData} />
               </SingleGraph>
             </SingleGraphContainer>
           </GraphContainer>
-          <GraphSettings />
+          <GraphSettings
+            isLog={isLog}
+            flipLog={this.flipLog}
+            showJhu={showJhu}
+            flipJhu={this.flipJhu}
+            startDate={startDate}
+            changeStartDate={this.changeStartDate}
+          />
           <CurrentDisplayInfo>{viewedSeries}</CurrentDisplayInfo>
         </BoxedContainer>
         <RegionContainer>
@@ -226,6 +243,7 @@ class RegionSelect extends Component {
             selected={country}
             dataKey=""
             showAll
+            showJhu={showJhu}
             onRegionClick={this.clickCountry}
             doubleClick={() => this.pinKeyToggle(seriesKey)}
           />

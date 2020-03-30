@@ -99,14 +99,27 @@ const getDatasetData = (thisData, xAxis, fieldName) => {
   return sortedData;
 };
 
-const getData = (allData, fieldName, seriesInfo, showSingleColor) => {
+const getData = (
+  allData,
+  fieldName,
+  seriesInfo,
+  showSingleColor,
+  startDate
+) => {
   const cleanedDataKeyed = {};
 
   seriesInfo.forEach(([key, info]) => {
     // Normalize the data with timestamps we can interpret
-    const cleanedData = allData[key].series.map((row) => {
-      return { ...row, t: new Date(row.day) };
+    let cleanedData = allData[key].series.map((row) => {
+      const [month, day, year] = row.day.split('-');
+      return { ...row, t: new Date(year, month - 1, day) };
     });
+
+    if (startDate) {
+      cleanedData = cleanedData.filter(
+        (row) => row.t > startDate.clone().subtract(1, 'days')
+      );
+    }
 
     cleanedDataKeyed[key] = cleanedData;
   });
@@ -152,10 +165,17 @@ export default class GraphData extends PureComponent {
       seriesInfo,
       isLog,
       showSingleColor,
+      startDate,
     } = this.props;
 
-    const data = getData(allData, fieldName, seriesInfo, showSingleColor);
-    // console.log('data', data);
+    const data = getData(
+      allData,
+      fieldName,
+      seriesInfo,
+      showSingleColor,
+      startDate
+    );
+    console.log('data', data);
 
     return <Line data={data} options={getOptions(isLog)} />;
   }
