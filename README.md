@@ -22,6 +22,8 @@ within the project.
 
 ## Running project
 
+[Install Node.js](https://nodejs.org/en/download/) on your machine if it isn't already installed.
+
 The first time you run the project you should install all dependencies:
 
     npm ci
