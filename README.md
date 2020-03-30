@@ -6,7 +6,7 @@
 
 This website plots cases of COVID-19 by region and across regions over time.
 
-The data is currently sourced from the [John Hopkins data set](https://github.com/CSSEGISandData/COVID-19/), and is [updated periodically](#updating-dataset).
+The data is currently sourced from the [John Hopkins data set](https://github.com/CSSEGISandData/COVID-19/), as well as the [NYT dataset](https://github.com/nytimes/covid-19-data)(see their [article here](https://www.nytimes.com/interactive/2020/us/coronavirus-us-cases.html)), and is [updated periodically](#updating-dataset).
 
 ## Cloning the repo
 
@@ -45,7 +45,14 @@ Currently the dataset is updating manually by running the following periodically
     git submodule update --remote
     npm run prebuild
 
-_Note: The deployed website can be newer than the pinned git hash of the John Hopkins submodule_
+_Note: The deployed website can be newer than the pinned git hash of the submodules_
+
+### Multiple datasets
+
+We use the John Hopkins dataset for all data except for the US, if you want to use the JHU dataset
+instead go to the options to make it visible, it will be `US (JHU)`.
+
+The main reason we use the NYT dataset is that some US counties have missing timeranges in the JHU dataset
 
 ## Contributions
 

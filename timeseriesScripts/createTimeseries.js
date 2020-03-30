@@ -2,8 +2,10 @@ const fs = require('fs');
 const csv = require('csv-parser');
 const { countryMapping, stateMapping } = require('./nameMapping');
 
-const rawDataPath =
+const rawJhuDataPath =
   '../COVID-19/csse_covid_19_data/csse_covid_19_daily_reports';
+// const rawNytStatePath = '../covid-19-data/us-states.csv';
+const rawNytCountyPath = '../covid-19-data/us-counties.csv';
 const timeseriesDataLocation = `../src/timeseriesData/`;
 const joinChar = '$';
 
@@ -34,24 +36,32 @@ const joinChar = '$';
 //   return result;
 // };
 
+const readCountry = (dataRow) => {
+  let { Country_Region } = dataRow;
+  if (!Country_Region) {
+    Country_Region = dataRow['Country/Region'];
+  }
+
+  if (Country_Region in countryMapping) {
+    Country_Region = countryMapping[Country_Region];
+  }
+  return Country_Region;
+};
+
 const getPrimaryKey = (dataRow) => {
-  let { Country_Region, Province_State, Admin2 } = dataRow;
+  let { Province_State, Admin2 } = dataRow;
   if (!Province_State) {
     // March 13th adds a zero width no break space.
     Province_State =
-      dataRow['Province/State'] || dataRow['\uFEFFProvince/State'];
-  }
-  if (!Country_Region) {
-    Country_Region = dataRow['Country/Region'];
+      dataRow['Province/State'] ||
+      dataRow['\uFEFFProvince/State'] ||
+      dataRow['state']; // NYT data
   }
 
   if (!Admin2 && Province_State && Province_State.includes(', ')) {
     [Admin2, Province_State] = Province_State.split(', ');
   }
 
-  if (Country_Region in countryMapping) {
-    Country_Region = countryMapping[Country_Region];
-  }
   if (Province_State in stateMapping) {
     Province_State = stateMapping[Province_State];
   }
@@ -59,6 +69,12 @@ const getPrimaryKey = (dataRow) => {
   if (Admin2 && Admin2.endsWith('County')) {
     Admin2 = Admin2.replace(' County', '');
   }
+
+  if (!Admin2) {
+    Admin2 = dataRow['county']; // NYT data
+  }
+
+  const Country_Region = readCountry(dataRow);
 
   const pkArray = [Country_Region, Province_State, Admin2];
   return pkArray.filter((row) => !!row).join(joinChar);
@@ -90,17 +106,26 @@ const addRegionToAllData = (allTimeseries, key, subs) => {
   }
 };
 
-const parseIntSafe = (str) => {
+const parseIntSafe = (str, altStr) => {
   const newInt = parseInt(str);
   if (isNaN(newInt)) {
+    if (altStr) {
+      return parseIntSafe(altStr, null);
+    }
     return 0;
   }
   return newInt;
 };
 
-const addDataToSpecificRegion = (allTimeseries, key, dataRow, day) => {
-  const confirm = parseIntSafe(dataRow['Confirmed']);
-  const dead = parseIntSafe(dataRow['Deaths']);
+const addDataToSpecificRegion = (
+  allTimeseries,
+  key,
+  dataRow,
+  day,
+  dontAddToRoot
+) => {
+  const confirm = parseIntSafe(dataRow['Confirmed'], dataRow['cases']);
+  const dead = parseIntSafe(dataRow['Deaths'], dataRow['deaths']);
   const rec = parseIntSafe(dataRow['Recovered']);
   const act = parseIntSafe(dataRow['Active']);
 
@@ -130,11 +155,22 @@ const addDataToSpecificRegion = (allTimeseries, key, dataRow, day) => {
 
   const [parentKey] = getSplitKey(key);
   if (parentKey !== null) {
-    addDataToSpecificRegion(allTimeseries, parentKey, dataRow, day);
+    if (!key.includes(joinChar) && dontAddToRoot) {
+      // Don't add NYT to global data
+      return;
+    }
+    // console.log('parentKey', parentKey, dontAddToRoot);
+    addDataToSpecificRegion(
+      allTimeseries,
+      parentKey,
+      dataRow,
+      day,
+      dontAddToRoot
+    );
   }
 };
 
-const addDataToTimeseries = (allTimeseries, dataRow, day) => {
+const addDataToTimeseries = (allTimeseries, dataRow, day, dontAddToRoot) => {
   const primaryKey = getPrimaryKey(dataRow);
   // if (day === '03-13-2020') {
   //   console.log(
@@ -150,20 +186,27 @@ const addDataToTimeseries = (allTimeseries, dataRow, day) => {
   //   });
   // }
   addRegionToAllData(allTimeseries, primaryKey, []);
-  addDataToSpecificRegion(allTimeseries, primaryKey, dataRow, day);
+  addDataToSpecificRegion(
+    allTimeseries,
+    primaryKey,
+    dataRow,
+    day,
+    dontAddToRoot
+  );
 };
 
 // Load all
-const rawDataDates = fs.readdirSync(rawDataPath);
+const rawDataDates = fs.readdirSync(rawJhuDataPath);
 
 const onlyDates = rawDataDates.filter((fileName) => fileName.endsWith('.csv'));
 console.log(onlyDates);
 
 const allTimeseries = {};
 
+// Read all John Hopkins data and insert into global object
 const dateCreatePromises = onlyDates.map((singleDateFile) => {
   return new Promise((accept) => {
-    const readFilePath = `${rawDataPath}/${singleDateFile}`;
+    const readFilePath = `${rawJhuDataPath}/${singleDateFile}`;
     const dateSegment = singleDateFile.split('.')[0];
     fs.createReadStream(readFilePath)
       .pipe(csv())
@@ -171,6 +214,9 @@ const dateCreatePromises = onlyDates.map((singleDateFile) => {
         // if (dateSegment === '03-13-2020') {
         //   console.log(dataRow);
         // }
+        if (readCountry(dataRow) === 'US') {
+          dataRow['Country_Region'] = 'US (JHU)';
+        }
         addDataToTimeseries(allTimeseries, dataRow, dateSegment);
       })
       .on('end', () => {
@@ -178,6 +224,23 @@ const dateCreatePromises = onlyDates.map((singleDateFile) => {
       });
   });
 });
+
+const readNytData = () => {
+  return new Promise((accept) => {
+    fs.createReadStream(rawNytCountyPath)
+      .pipe(csv())
+      .on('data', (dataRow) => {
+        dataRow['Country/Region'] = 'US';
+        const [year, month, day] = dataRow['date'].split('-');
+        const date = [month, day, year].join('-');
+        const dontAddToRoot = true;
+        addDataToTimeseries(allTimeseries, dataRow, date, dontAddToRoot);
+      })
+      .on('end', () => {
+        accept();
+      });
+  });
+};
 
 // Depth 0: '' - Root
 // Depth 1: 'Country'
@@ -229,6 +292,8 @@ const sortAllDates = () => {
 };
 
 Promise.all(dateCreatePromises).then(() => {
-  sortAllDates();
-  writeTsFile('');
+  readNytData().then(() => {
+    sortAllDates();
+    writeTsFile('');
+  });
 });
