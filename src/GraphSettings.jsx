@@ -25,6 +25,8 @@ jsx;
 // eslint-disable-next-line
 React;
 
+const defaultCaseSettingNum = 50;
+
 export const SeriesRowContainer = styled.div`
   margin-top: 8px;
 `;
@@ -102,6 +104,33 @@ class GraphSettings extends Component {
           <AlteredForm>
             <Form layout="horizontal">
               <Form.Item>
+                <Checkbox
+                  checked={isStartFromNumberOfCases}
+                  onChange={() =>
+                    changeStartValue(
+                      isStartFromNumberOfCases ? null : defaultCaseSettingNum
+                    )
+                  }
+                >
+                  <b>Align different regions with single starting case value</b>
+                </Checkbox>
+              </Form.Item>
+              <StartNumCasesContainer
+                isStartFromNumberOfCases={isStartFromNumberOfCases}
+              >
+                <Form.Item label="Start from case number">
+                  <InputNumber
+                    min={0}
+                    value={startValue}
+                    formatter={(value) =>
+                      `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+                    }
+                    parser={(value) => value.replace(/\$\s?|(,*)/g, '')}
+                    onChange={changeStartValue}
+                  />
+                </Form.Item>
+              </StartNumCasesContainer>
+              <Form.Item>
                 <Checkbox checked={isLog} onChange={() => flipLog && flipLog()}>
                   Logarithim scaled Y axis enabled
                 </Checkbox>
@@ -114,31 +143,6 @@ class GraphSettings extends Component {
                   Show JHU data for US
                 </Checkbox>
               </Form.Item>
-              <Form.Item>
-                <Checkbox
-                  checked={isStartFromNumberOfCases}
-                  onChange={() =>
-                    changeStartValue(isStartFromNumberOfCases ? null : 5)
-                  }
-                >
-                  Start all cases from same value
-                </Checkbox>
-              </Form.Item>
-              <StartNumCasesContainer
-                isStartFromNumberOfCases={isStartFromNumberOfCases}
-              >
-                <Form.Item label="Start from # of cases">
-                  <InputNumber
-                    min={0}
-                    value={startValue}
-                    formatter={(value) =>
-                      `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')
-                    }
-                    parser={(value) => value.replace(/\$\s?|(,*)/g, '')}
-                    onChange={changeStartValue}
-                  />
-                </Form.Item>
-              </StartNumCasesContainer>
               <Form.Item label="Don't show data before">
                 <DatePicker
                   disabled={false}

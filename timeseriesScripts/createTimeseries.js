@@ -258,7 +258,7 @@ const writeTsFile = (key, depth = 0) => {
     data.subs.forEach((subDataField) => {
       const subKey = key === '' ? subDataField : key + joinChar + subDataField;
 
-      if (depth <= 1) {
+      if (depth <= 1 && allTimeseries[subKey].subs.length > 0) {
         writeTsFile(subKey, depth + 1);
       }
 

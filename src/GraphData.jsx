@@ -14,6 +14,12 @@ const getOptions = (isLog, startValue) => ({
           },
           unit: 'day',
         },
+        scaleLabel: {
+          display: startValue !== null,
+          labelString: `Days since ${
+            startValue && formatNumber(startValue)
+          } cases`,
+        },
       },
     ],
     yAxes: [
@@ -55,7 +61,19 @@ const getOptions = (isLog, startValue) => ({
         return label;
       },
       title: (t) => {
-        return moment(t[0].xLabel).format('MMM Do YYYY');
+        const lbl = t[0].xLabel;
+        if (typeof lbl === 'number') {
+          const day = Math.abs(lbl) <= 1 ? 'day' : 'days';
+          const startValueFmt = formatNumber(startValue);
+
+          if (lbl > 0) {
+            return `${lbl} ${day} since ${startValueFmt} cases`;
+          } else if (lbl < 0) {
+            return `${-lbl} ${day} until ${startValueFmt} cases`;
+          }
+          return `The day ${startValueFmt} cases occured`;
+        }
+        return moment(lbl).format('MMM Do YYYY');
       },
     },
   },
@@ -97,17 +115,25 @@ const xValsEqual = (x1, x2) => {
   return x1 === x2;
 };
 
-// Todo: This is a horrendous implementation - but low in line count :|
-const getDatasetData = (thisData, xAxis, fieldName) => {
+const getDatasetData = (thisData, xAxis, fieldName, isLog) => {
+  // Map to x + y cooridinates
   const data = thisData.map((row) => ({ y: row[fieldName], x: row.t }));
-  xAxis.forEach((xTick) => {
-    if (!data.some((row) => xValsEqual(row.x, xTick))) {
-      data.push({ x: xTick, y: null });
-      // console.log('Woo!');
-    }
-  });
+
+  // Add null values to graph ONLY if we're not in log mode
+  // Log graphs have a bug where they still show null values
+  // But we want to insert null values in general because it helps you
+  // find places where data is missing
+  // Todo: This is a _horrendous_ implementation - but low in line count :|
+  if (!isLog) {
+    xAxis.forEach((xTick) => {
+      if (!data.some((row) => xValsEqual(row.x, xTick))) {
+        data.push({ x: xTick, y: null });
+      }
+    });
+  }
+
+  // Sort by time
   const sortedData = data.sort((date1, date2) => date1.x - date2.x);
-  // console.log('sortedData', sortedData);
   return sortedData;
 };
 
@@ -117,7 +143,8 @@ const getData = (
   seriesInfo,
   showSingleColor,
   startDate,
-  startValue
+  startValue,
+  isLog
 ) => {
   const cleanedDataKeyed = {};
 
@@ -185,7 +212,7 @@ const getData = (
       pointRadius: 2,
       pointHitRadius: 10,
       spanGaps: false,
-      data: getDatasetData(cleanedDataKeyed[key], xAxis, fieldName),
+      data: getDatasetData(cleanedDataKeyed[key], xAxis, fieldName, isLog),
     })),
   };
 };
@@ -208,7 +235,8 @@ export default class GraphData extends PureComponent {
       seriesInfo,
       showSingleColor,
       startDate,
-      startValue
+      startValue,
+      isLog
     );
     console.log('data', data);
 

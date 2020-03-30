@@ -29,8 +29,11 @@ export const BoxedContainer = styled.div`
 `;
 
 export const RegionContainer = styled.div`
+  position: relative;
+  width: fit-content;
   display: flex;
   justify-content: center;
+  margin: auto;
   margin-top: 8px;
 `;
 
@@ -68,6 +71,15 @@ export const LogSwitchButton = styled.span`
   cursor: pointer;
 `;
 
+export const IntroText = styled.div`
+  position: absolute;
+  font-size: 30px;
+  left: 210px;
+  & > .subIntro {
+    font-size: 14px;
+  }
+`;
+
 class RegionSelect extends Component {
   constructor(props) {
     super(props);
@@ -90,21 +102,23 @@ class RegionSelect extends Component {
     };
   }
 
-  clickCountry = (reg) => () => {
+  clickCountry = (reg, hasChildren) => () => {
     this.setState({ country: reg, state: '', county: '' });
-    importRegion(reg).then(() => {
-      console.log('finished loading reg');
-      this.forceUpdate();
-    });
+    hasChildren &&
+      importRegion(reg).then(() => {
+        console.log('finished loading reg');
+        this.forceUpdate();
+      });
   };
 
-  clickState = (reg) => () => {
+  clickState = (reg, hasChildren) => () => {
     const stateId = mergeKeys(this.state.country, reg);
     this.setState({ state: reg, county: '' });
-    importRegion(stateId).then(() => {
-      console.log('finished loading reg');
-      this.forceUpdate();
-    });
+    hasChildren &&
+      importRegion(stateId).then(() => {
+        console.log('finished loading reg');
+        this.forceUpdate();
+      });
   };
 
   clickCounty = (reg) => () => {
@@ -270,6 +284,12 @@ class RegionSelect extends Component {
             onRegionClick={this.clickCounty}
             doubleClick={() => this.pinKeyToggle(seriesKey)}
           />
+          {seriesKey === '' && (
+            <IntroText>
+              Click a country to start
+              <div className="subIntro">Double click to pin and compare</div>
+            </IntroText>
+          )}
         </RegionContainer>
       </div>
     );
