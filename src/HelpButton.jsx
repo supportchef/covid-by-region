@@ -62,7 +62,7 @@ class HelpButton extends Component {
           time.
           <br />
           <br />
-          Double click on an region to pin it to the graph and compare multiple
+          Double click on a region to pin it to the graph and compare multiple
           regions
           <br />
           <br />
@@ -79,7 +79,7 @@ class HelpButton extends Component {
           ), and is updated periodically.
           <br />
           <br />
-          Access the US John Hopkins dataset by through Advanced Graph Settings.
+          Access the US John Hopkins dataset through Advanced Graph Settings.
         </Modal>
       </div>
     );
