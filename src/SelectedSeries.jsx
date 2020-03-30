@@ -16,7 +16,8 @@ React;
 export const SeriesRowContainer = styled.div`
   max-width: 460px;
   margin: 6px auto;
-  width: calc(100% - 140px);
+  width: calc(100% - 14px);
+  // width: calc(100% - 140px);
 `;
 
 export const SeriesRow = styled.div`

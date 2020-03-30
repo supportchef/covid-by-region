@@ -168,7 +168,7 @@ const getData = (
     if (isStartValue) {
       const startValueFieldName = fieldName;
       let firstIndex = cleanedData.findIndex(
-        (row) => row[startValueFieldName] > startValue
+        (row) => row[startValueFieldName] >= startValue
       );
 
       if (firstIndex === -1) {

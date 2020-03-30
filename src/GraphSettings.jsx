@@ -42,6 +42,10 @@ export const StartNumCasesContainer = styled.div`
     isStartFromNumberOfCases ? '42px' : '0px'};
   overflow: hidden;
   transition: height 0.5s cubic-bezier(0.78, 0.14, 0.15, 0.86);
+
+  & .ant-col {
+    flex: 0 1 auto !important;
+  }
 `;
 
 function disabledDate(current) {

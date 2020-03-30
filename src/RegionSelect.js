@@ -50,6 +50,11 @@ export const GraphContainer = styled.div`
   display: flex;
   justify-content: center;
   // height: 40vh;
+
+  @media only screen and (max-width: 600px) {
+    margin-top: 5px;
+    flex-direction: column;
+  }
 `;
 
 export const SingleGraph = styled.div`
@@ -58,10 +63,19 @@ export const SingleGraph = styled.div`
   position: relative;
   margin: auto;
   width: 45vw;
+
+  @media only screen and (max-width: 600px) {
+    width: 100vw;
+    margin-top: -5px;
+  }
 `;
 
 export const SingleGraphContainer = styled.div`
   position: relative;
+
+  @media only screen and (max-width: 600px) {
+    margin-top: 5px;
+  }
 `;
 
 export const LogSwitchButton = styled.span`
@@ -69,6 +83,10 @@ export const LogSwitchButton = styled.span`
   left: 0;
   font-size: 10px;
   cursor: pointer;
+
+  @media only screen and (max-width: 600px) {
+    display: none;
+  }
 `;
 
 export const IntroText = styled.div`
