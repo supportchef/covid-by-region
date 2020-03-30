@@ -8,12 +8,16 @@ import Button from 'antd/lib/button';
 import Checkbox from 'antd/lib/checkbox';
 import Modal from 'antd/lib/modal';
 import Form from 'antd/lib/form';
+// import Input from 'antd/lib/input';
+import InputNumber from 'antd/lib/input-number';
 import DatePicker from 'antd/lib/date-picker';
 
 import 'antd/lib/button/style/index.css';
 import 'antd/lib/checkbox/style/index.css';
 import 'antd/lib/modal/style/index.css';
 import 'antd/lib/form/style/index.css';
+import 'antd/lib/input/style/index.css';
+import 'antd/lib/input-number/style/index.css';
 import 'antd/lib/date-picker/style/index.css';
 
 // eslint-disable-next-line
@@ -29,6 +33,13 @@ export const AlteredForm = styled.div`
   & .ant-form-item {
     margin-bottom: 10px;
   }
+`;
+
+export const StartNumCasesContainer = styled.div`
+  height: ${({ isStartFromNumberOfCases }) =>
+    isStartFromNumberOfCases ? '42px' : '0px'};
+  overflow: hidden;
+  transition: height 0.5s cubic-bezier(0.78, 0.14, 0.15, 0.86);
 `;
 
 function disabledDate(current) {
@@ -62,8 +73,14 @@ class GraphSettings extends Component {
       flipJhu,
       startDate,
       changeStartDate,
+      startValue,
+      changeStartValue,
     } = this.props;
     const { graphSettingsVisible } = this.state;
+
+    const isStartFromNumberOfCases = startValue !== null;
+
+    console.log('startValue', startValue);
 
     return (
       <SeriesRowContainer>
@@ -85,28 +102,49 @@ class GraphSettings extends Component {
           <AlteredForm>
             <Form layout="horizontal">
               <Form.Item>
-                <Checkbox
-                  checked={isLog}
-                  disabled={false}
-                  onChange={() => flipLog && flipLog()}
-                >
+                <Checkbox checked={isLog} onChange={() => flipLog && flipLog()}>
                   Logarithim scaled Y axis enabled
                 </Checkbox>
               </Form.Item>
               <Form.Item>
                 <Checkbox
                   checked={showJhu}
-                  disabled={false}
                   onChange={() => flipJhu && flipJhu()}
                 >
                   Show JHU data for US
                 </Checkbox>
               </Form.Item>
-              <Form.Item name="startDate" label="Start Date">
+              <Form.Item>
+                <Checkbox
+                  checked={isStartFromNumberOfCases}
+                  onChange={() =>
+                    changeStartValue(isStartFromNumberOfCases ? null : 5)
+                  }
+                >
+                  Start all cases from same value
+                </Checkbox>
+              </Form.Item>
+              <StartNumCasesContainer
+                isStartFromNumberOfCases={isStartFromNumberOfCases}
+              >
+                <Form.Item label="Start from # of cases">
+                  <InputNumber
+                    min={0}
+                    value={startValue}
+                    formatter={(value) =>
+                      `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+                    }
+                    parser={(value) => value.replace(/\$\s?|(,*)/g, '')}
+                    onChange={changeStartValue}
+                  />
+                </Form.Item>
+              </StartNumCasesContainer>
+              <Form.Item label="Don't show data before">
                 <DatePicker
+                  disabled={false}
                   disabledDate={disabledDate}
                   onChange={changeStartDate}
-                  defaultValue={startDate}
+                  value={startDate}
                 />
               </Form.Item>
             </Form>

@@ -3,11 +3,11 @@ import { getNameFromKey, formatNumber, formatNumberSuffix } from './dataLib';
 import { Line } from 'react-chartjs-2';
 import moment from 'moment';
 
-const getOptions = (isLog) => ({
+const getOptions = (isLog, startValue) => ({
   scales: {
     xAxes: [
       {
-        type: 'time',
+        type: startValue === null ? 'time' : 'linear',
         time: {
           displayFormats: {
             quarter: 'MMM YYYY',
@@ -61,7 +61,7 @@ const getOptions = (isLog) => ({
   },
 });
 
-const getXAxis = (data) => {
+const getXAxis = (data, isStartValue) => {
   let maxDate = null;
   let minDate = null;
   // console.log('Object.values(data)', Object.values(data));
@@ -78,18 +78,30 @@ const getXAxis = (data) => {
   // console.log('maxDate', maxDate);
   const allDates = [minDate];
   while (allDates[allDates.length - 1] < maxDate) {
-    const nextDate = new Date(allDates[allDates.length - 1]);
-    nextDate.setDate(nextDate.getDate() + 1);
+    let nextDate;
+    if (isStartValue) {
+      nextDate = allDates[allDates.length - 1] + 1;
+    } else {
+      nextDate = new Date(allDates[allDates.length - 1]);
+      nextDate.setDate(nextDate.getDate() + 1);
+    }
     allDates.push(nextDate);
   }
   return allDates;
+};
+
+const xValsEqual = (x1, x2) => {
+  if (x1.getTime && x2.getTime) {
+    return x1.getTime() === x2.getTime();
+  }
+  return x1 === x2;
 };
 
 // Todo: This is a horrendous implementation - but low in line count :|
 const getDatasetData = (thisData, xAxis, fieldName) => {
   const data = thisData.map((row) => ({ y: row[fieldName], x: row.t }));
   xAxis.forEach((xTick) => {
-    if (!data.some((row) => row.x.getTime() === xTick.getTime())) {
+    if (!data.some((row) => xValsEqual(row.x, xTick))) {
       data.push({ x: xTick, y: null });
       // console.log('Woo!');
     }
@@ -104,16 +116,21 @@ const getData = (
   fieldName,
   seriesInfo,
   showSingleColor,
-  startDate
+  startDate,
+  startValue
 ) => {
   const cleanedDataKeyed = {};
 
+  const isStartValue = startValue !== null;
+
   seriesInfo.forEach(([key, info]) => {
     // Normalize the data with timestamps we can interpret
-    let cleanedData = allData[key].series.map((row) => {
-      const [month, day, year] = row.day.split('-');
-      return { ...row, t: new Date(year, month - 1, day) };
-    });
+    let cleanedData = allData[key].series
+      .map((row) => {
+        const [month, day, year] = row.day.split('-');
+        return { ...row, t: new Date(year, month - 1, day) };
+      })
+      .reverse();
 
     if (startDate) {
       cleanedData = cleanedData.filter(
@@ -121,10 +138,26 @@ const getData = (
       );
     }
 
+    if (isStartValue) {
+      const startValueFieldName = fieldName;
+      let firstIndex = cleanedData.findIndex(
+        (row) => row[startValueFieldName] > startValue
+      );
+
+      if (firstIndex === -1) {
+        firstIndex = cleanedData.length - 1;
+      }
+
+      const timeStampValue = moment(cleanedData[firstIndex].t);
+      cleanedData = cleanedData.map((row) => {
+        return { ...row, t: -timeStampValue.diff(row.t, 'days') };
+      });
+    }
+
     cleanedDataKeyed[key] = cleanedData;
   });
 
-  const xAxis = getXAxis(cleanedDataKeyed);
+  const xAxis = getXAxis(cleanedDataKeyed, isStartValue);
 
   const colorName = showSingleColor ? 'confirm' : fieldName;
 
@@ -166,6 +199,7 @@ export default class GraphData extends PureComponent {
       isLog,
       showSingleColor,
       startDate,
+      startValue,
     } = this.props;
 
     const data = getData(
@@ -173,10 +207,11 @@ export default class GraphData extends PureComponent {
       fieldName,
       seriesInfo,
       showSingleColor,
-      startDate
+      startDate,
+      startValue
     );
     console.log('data', data);
 
-    return <Line data={data} options={getOptions(isLog)} />;
+    return <Line data={data} options={getOptions(isLog, startValue)} />;
   }
 }

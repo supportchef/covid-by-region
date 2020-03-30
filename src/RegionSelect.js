@@ -79,6 +79,7 @@ class RegionSelect extends Component {
       isLog: false,
       showJhu: false,
       startDate: null,
+      startValue: null,
       defaultSeriesInfo: {
         color: {
           index: 1,
@@ -146,6 +147,10 @@ class RegionSelect extends Component {
     this.setState({ startDate });
   };
 
+  changeStartValue = (startValue) => {
+    this.setState({ startValue });
+  };
+
   render() {
     const {
       country,
@@ -156,6 +161,7 @@ class RegionSelect extends Component {
       isLog,
       showJhu,
       startDate,
+      startValue,
     } = this.state;
 
     const stateId = state ? mergeKeys(country, state) : '';
@@ -205,6 +211,7 @@ class RegionSelect extends Component {
       isLog,
       showSingleColor,
       startDate,
+      startValue,
     };
 
     return (
@@ -234,6 +241,8 @@ class RegionSelect extends Component {
             flipJhu={this.flipJhu}
             startDate={startDate}
             changeStartDate={this.changeStartDate}
+            startValue={startValue}
+            changeStartValue={this.changeStartValue}
           />
           <CurrentDisplayInfo>{viewedSeries}</CurrentDisplayInfo>
         </BoxedContainer>
