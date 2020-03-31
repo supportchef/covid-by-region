@@ -7,10 +7,10 @@ export default function (queryParams) {
       newQueryParams[key] = moment(
         decodeURIComponent(value).replace(/\"/g, '')
       );
-    } else if (typeof value === 'string') {
-      newQueryParams[key] = decodeURIComponent(value);
     } else if (key === 'pinnedKeys') {
       newQueryParams[key] = new Map(value);
+    } else if (typeof value === 'string') {
+      newQueryParams[key] = decodeURIComponent(value);
     } else {
       newQueryParams[key] = value;
     }

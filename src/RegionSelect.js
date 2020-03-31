@@ -139,8 +139,13 @@ class RegionSelect extends ReactQueryParams {
   }
 
   componentDidMount() {
-    const { country, state } = fixQueryParams(this.queryParams);
+    const { country, state, pinnedKeys } = fixQueryParams(this.queryParams);
     this.fetchCountryState(country, state);
+    pinnedKeys.forEach((value, pinnedKey) => {
+      console.log('pinnedKey', pinnedKey);
+      const [country, state] = pinnedKey.split('$');
+      this.fetchCountryState(country, state);
+    });
   }
 
   setQueryParamsWrapper = (newQueryParams) => {
