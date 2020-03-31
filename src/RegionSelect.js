@@ -1,13 +1,15 @@
 // this comment tells babel to convert jsx to calls to a function called jsx instead of React.createElement
 /** @jsx jsx */
-import { css, jsx } from '@emotion/core';
+import { jsx } from '@emotion/core';
 import styled from '@emotion/styled';
 import React, { Component } from 'react';
+import ReactQueryParams from 'react-query-params';
 import RegionColumn from './RegionColumn';
 import GraphData from './GraphData';
 import SelectedSeries from './SelectedSeries';
 import GraphSettings from './GraphSettings';
 import { mergeKeys, generateNewColors } from './dataLib';
+import fixQueryParams from './misc/fixQueryParams';
 
 import mainData from './timeseriesData/index';
 
@@ -18,9 +20,10 @@ React;
 
 let allData = mainData;
 const importRegion = (reg) => {
+  // console.log('importing region', reg);
   return import(`./timeseriesData/${reg}`).then((contents) => {
     allData = { ...allData, ...contents };
-    // console.log(allData)
+    // console.log('loaded new region', allData);
   });
 };
 
@@ -98,14 +101,14 @@ export const IntroText = styled.div`
   }
 `;
 
-class RegionSelect extends Component {
+class RegionSelect extends ReactQueryParams {
   constructor(props) {
     super(props);
-    this.state = {
+    this.defaultQueryParams = {
       country: '',
-      stateId: '',
+      state: '',
       county: '',
-      pinnedKeys: new Map(),
+      pinnedKeys: [],
       isLog: false,
       showJhu: false,
       startDate: null,
@@ -120,67 +123,110 @@ class RegionSelect extends Component {
     };
   }
 
-  clickCountry = (reg, hasChildren) => () => {
-    this.setState({ country: reg, state: '', county: '' });
-    hasChildren &&
-      importRegion(reg).then(() => {
-        console.log('finished loading reg');
+  componentDidMount() {
+    const { country, state } = fixQueryParams(this.queryParams);
+    this.fetchCountryState(country, state);
+  }
+
+  setQueryParamsWrapper = (newQueryParams) => {
+    const { country, state } = this.queryParams;
+    const { country: nextCountry, state: nextState } = newQueryParams;
+
+    this.setQueryParams(newQueryParams);
+
+    console.log('nextCountry', nextCountry);
+    if (nextCountry !== country || nextState !== state) {
+      this.fetchCountryState(nextCountry || country, nextState || state);
+    }
+  };
+
+  fetchCountryState(country, state) {
+    const thisKey = mergeKeys(country, state);
+
+    const thisCountry = allData[country];
+    const thisData = allData[thisKey];
+
+    const countryHasChildren = !thisCountry || thisCountry.subs.length > 0;
+    const thisRegionHasChildren = !thisData || thisData.subs.length > 0;
+
+    const importPromises = [];
+
+    if (countryHasChildren) {
+      importPromises.push(importRegion(country));
+    }
+
+    if (thisRegionHasChildren) {
+      importPromises.push(importRegion(thisKey));
+    }
+
+    if (importPromises.length > 0) {
+      Promise.all(importPromises).then(() => {
         this.forceUpdate();
       });
+    }
+  }
+
+  clickCountry = (reg, hasChildren) => () => {
+    this.setQueryParamsWrapper({ country: reg, state: '', county: '' });
+    // hasChildren &&
+    //   importRegion(reg).then(() => {
+    //     console.log('finished loading reg');
+    //     this.forceUpdate();
+    //   });
   };
 
   clickState = (reg, hasChildren) => () => {
-    const stateId = mergeKeys(this.state.country, reg);
-    this.setState({ state: reg, county: '' });
-    hasChildren &&
-      importRegion(stateId).then(() => {
-        console.log('finished loading reg');
-        this.forceUpdate();
-      });
+    // const { country } = this.queryParams;
+    // const stateId = mergeKeys(country, reg);
+    this.setQueryParamsWrapper({ state: reg, county: '' });
+    // hasChildren &&
+    //   importRegion(stateId).then(() => {
+    //     console.log('finished loading reg');
+    //     this.forceUpdate();
+    //   });
   };
 
   clickCounty = (reg) => () => {
-    this.setState({ county: reg });
+    this.setQueryParams({ county: reg });
   };
 
   pinKeyToggle = (key, val) => {
-    this.setState(({ pinnedKeys, defaultSeriesInfo }) => {
-      const newPinnedKeys = new Map(pinnedKeys);
-      const returnPayload = { pinnedKeys: newPinnedKeys };
-      if (pinnedKeys.has(key)) {
-        // const { [key]: _, ...newPinned } = pinnedKeys;
-        newPinnedKeys.delete(key);
-      } else {
-        newPinnedKeys.set(key, defaultSeriesInfo);
-        const allColors = [...newPinnedKeys.values()].map(
-          (seriesInfo) => seriesInfo.color
-        );
-        returnPayload.defaultSeriesInfo = {
-          color: generateNewColors(allColors),
-        };
-      }
-      return returnPayload;
-    });
+    const { pinnedKeys, defaultSeriesInfo } = fixQueryParams(this.queryParams);
+    const newPinnedKeys = new Map(pinnedKeys);
+    const returnPayload = {};
+    if (pinnedKeys.has(key)) {
+      // const { [key]: _, ...newPinned } = pinnedKeys;
+      newPinnedKeys.delete(key);
+    } else {
+      newPinnedKeys.set(key, defaultSeriesInfo);
+      const allColors = [...newPinnedKeys.values()].map(
+        (seriesInfo) => seriesInfo.color
+      );
+      returnPayload.defaultSeriesInfo = {
+        color: generateNewColors(allColors),
+      };
+    }
+    // return returnPayload;
+    returnPayload.pinnedKeys = [...newPinnedKeys.entries()];
+    this.setQueryParams(returnPayload);
   };
 
   flipLog = () => {
-    this.setState(({ isLog }) => ({
-      isLog: !isLog,
-    }));
+    const { isLog } = this.queryParams;
+    this.setQueryParams({ isLog: !isLog });
   };
 
   flipJhu = () => {
-    this.setState(({ showJhu }) => ({
-      showJhu: !showJhu,
-    }));
+    const { showJhu } = this.queryParams;
+    this.setQueryParams({ showJhu: !showJhu });
   };
 
   changeStartDate = (startDate) => {
-    this.setState({ startDate });
+    this.setQueryParams({ startDate });
   };
 
   changeStartValue = (startValue) => {
-    this.setState({ startValue });
+    this.setQueryParams({ startValue });
   };
 
   render() {
@@ -194,7 +240,7 @@ class RegionSelect extends Component {
       showJhu,
       startDate,
       startValue,
-    } = this.state;
+    } = fixQueryParams(this.queryParams);
 
     const stateId = state ? mergeKeys(country, state) : '';
     const seriesKey = mergeKeys(country, state, county);

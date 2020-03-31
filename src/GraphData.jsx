@@ -150,7 +150,11 @@ const getData = (
 
   const isStartValue = startValue !== null;
 
-  seriesInfo.forEach(([key, info]) => {
+  const seriesInfoSafe = seriesInfo.filter(([key, info]) => {
+    return !!allData[key];
+  });
+
+  seriesInfoSafe.forEach(([key, info]) => {
     // Normalize the data with timestamps we can interpret
     let cleanedData = allData[key].series
       .map((row) => {
@@ -191,7 +195,7 @@ const getData = (
   // console.log('xAxis', xAxis);
   return {
     labels: xAxis,
-    datasets: seriesInfo.map(([key, info]) => ({
+    datasets: seriesInfoSafe.map(([key, info]) => ({
       label: info.label || getNameFromKey(key),
       fill: false,
       lineTension: 0.1,
