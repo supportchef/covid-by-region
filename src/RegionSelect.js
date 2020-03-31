@@ -260,7 +260,7 @@ class RegionSelect extends Component {
               </SingleGraph>
             </SingleGraphContainer>
             <SingleGraphContainer>
-              Deceased
+              Deaths
               <SingleGraph className="chart-container">
                 <GraphData fieldName="dead" {...commonGraphData} />
               </SingleGraph>

@@ -144,7 +144,7 @@ class GraphSettings extends Component {
                   checked={showJhu}
                   onChange={() => flipJhu && flipJhu()}
                 >
-                  Show JHU data for US
+                  Show John Hopkins dataset for US
                 </Checkbox>
               </Form.Item>
               <Form.Item label="Don't show data before">

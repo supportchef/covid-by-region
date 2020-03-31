@@ -1,6 +1,6 @@
 // this comment tells babel to convert jsx to calls to a function called jsx instead of React.createElement
 /** @jsx jsx */
-import { css, jsx } from '@emotion/core';
+import { jsx } from '@emotion/core';
 import styled from '@emotion/styled';
 import React, { Component } from 'react';
 import { getNameFromKey } from './dataLib';
@@ -100,7 +100,7 @@ class SelectedSeries extends Component {
             {!showSingleColor && (
               <ColorRow>
                 <ColorSwatch color={deadColor} />
-                Deceased
+                Deaths
               </ColorRow>
             )}
           </ColorContainer>
