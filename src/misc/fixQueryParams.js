@@ -10,7 +10,11 @@ export default function (queryParams) {
     } else if (key === 'selectedInfo' && typeof value === 'string') {
       newQueryParams[key] = JSON.parse(decodeURIComponent(value));
     } else if (key === 'pinnedKeys') {
-      newQueryParams[key] = new Map(JSON.parse(decodeURIComponent(value)));
+      let safeValue = value;
+      if (typeof value === 'string') {
+        safeValue = JSON.parse(decodeURIComponent(value));
+      }
+      newQueryParams[key] = new Map(safeValue);
     } else if (typeof value === 'string') {
       newQueryParams[key] = decodeURIComponent(value);
     } else {
