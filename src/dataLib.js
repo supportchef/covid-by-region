@@ -63,7 +63,7 @@ const availableColors = [
 ];
 
 const issuedColorsHasIndex = (issuedColors, index) => {
-  return issuedColors.some((color) => color.index === index);
+  return issuedColors.some((colorIdx) => colorIdx === index);
 };
 
 export const generateNewColors = (issuedColors) => {
@@ -75,10 +75,10 @@ export const generateNewColors = (issuedColors) => {
     }
     index += 1;
   }
-  const [confirm] = availableColors[index];
-  return {
-    index,
-    confirm,
-    dead: '255,99,132',
-  };
+  return index;
+};
+
+export const getColor = (colorIndex) => {
+  const [confirm] = availableColors[colorIndex];
+  return { confirm, dead: '255,99,132' };
 };

@@ -1,5 +1,10 @@
 import React, { PureComponent } from 'react';
-import { getNameFromKey, formatNumber, formatNumberSuffix } from './dataLib';
+import {
+  getNameFromKey,
+  formatNumber,
+  formatNumberSuffix,
+  getColor,
+} from './dataLib';
 import { Line } from 'react-chartjs-2';
 import moment from 'moment';
 
@@ -29,6 +34,9 @@ const getOptions = (isLog, startValue) => ({
           // stepSize: 100000,
           callback: function (tick) {
             if (!isLog) {
+              if (Math.floor(tick) !== tick) {
+                return '';
+              }
               return formatNumberSuffix(tick);
             }
             var remain = tick / Math.pow(10, Math.floor(Math.log10(tick)));
@@ -199,19 +207,19 @@ const getData = (
       label: info.label || getNameFromKey(key),
       fill: false,
       lineTension: 0.1,
-      backgroundColor: `rgba(${info.color[colorName]},1)`,
-      borderColor: `rgba(${info.color[colorName]},1)`,
+      backgroundColor: `rgba(${getColor(info.color)[colorName]},1)`,
+      borderColor: `rgba(${getColor(info.color)[colorName]},1)`,
       borderCapStyle: 'butt',
       borderDash: [],
       borderDashOffset: 0.0,
       borderJoinStyle: 'miter',
-      hoverBackgroundColor: `rgba(${info.color[colorName]},1)`,
-      pointBorderColor: `rgba(${info.color[colorName]},1)`,
-      pointBackgroundColor: `rgba(${info.color[colorName]},1)`,
+      hoverBackgroundColor: `rgba(${getColor(info.color)[colorName]},1)`,
+      pointBorderColor: `rgba(${getColor(info.color)[colorName]},1)`,
+      pointBackgroundColor: `rgba(${getColor(info.color)[colorName]},1)`,
       pointBorderWidth: 1,
       pointHoverRadius: 5,
-      pointHoverBackgroundColor: `rgba(${info.color[colorName]},1)`,
-      pointHoverBorderColor: `rgba(${info.color[colorName]},1)`,
+      pointHoverBackgroundColor: `rgba(${getColor(info.color)[colorName]},1)`,
+      pointHoverBorderColor: `rgba(${getColor(info.color)[colorName]},1)`,
       pointHoverBorderWidth: 2,
       pointRadius: 2,
       pointHitRadius: 10,

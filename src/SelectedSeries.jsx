@@ -3,7 +3,7 @@
 import { jsx } from '@emotion/core';
 import styled from '@emotion/styled';
 import React, { Component } from 'react';
-import { getNameFromKey } from './dataLib';
+import { getNameFromKey, getColor } from './dataLib';
 import Checkbox from 'antd/lib/checkbox';
 
 import 'antd/lib/checkbox/style/index.css';
@@ -86,15 +86,15 @@ class SelectedSeries extends Component {
     const name = getNameFromKey(seriesKey);
 
     const deadColor = showSingleColor
-      ? seriesInfo.color.confirm
-      : seriesInfo.color.dead;
+      ? getColor(seriesInfo.color).confirm
+      : getColor(seriesInfo.color).dead;
 
     return (
       <SeriesRowContainer>
         <SeriesRow>
           <ColorContainer>
             <ColorRow>
-              <ColorSwatch color={seriesInfo.color.confirm} />
+              <ColorSwatch color={getColor(seriesInfo.color).confirm} />
               {showSingleColor ? 'Color' : 'Confirmed'}
             </ColorRow>
             {!showSingleColor && (

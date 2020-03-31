@@ -113,12 +113,8 @@ class RegionSelect extends ReactQueryParams {
       showJhu: false,
       startDate: null,
       startValue: null,
-      defaultSeriesInfo: {
-        color: {
-          index: 1,
-          confirm: '75,192,192',
-          dead: '255,99,132',
-        },
+      selectedInfo: {
+        color: 1,
       },
     };
   }
@@ -136,33 +132,36 @@ class RegionSelect extends ReactQueryParams {
 
     console.log('nextCountry', nextCountry);
     if (nextCountry !== country || nextState !== state) {
-      this.fetchCountryState(nextCountry || country, nextState || state);
+      const safeCountry = nextCountry !== undefined ? nextCountry : country;
+      const safeState = nextState !== undefined ? nextState : state;
+      this.fetchCountryState(safeCountry, safeState);
     }
   };
 
   fetchCountryState(country, state) {
-    const thisKey = mergeKeys(country, state);
-
     const thisCountry = allData[country];
-    const thisData = allData[thisKey];
-
     const countryHasChildren = !thisCountry || thisCountry.subs.length > 0;
-    const thisRegionHasChildren = !thisData || thisData.subs.length > 0;
 
-    const importPromises = [];
+    const fetchRegionIfNeeded = () => {
+      const thisKey = mergeKeys(country, state);
+
+      const thisData = allData[thisKey];
+      const thisRegionHasChildren = !thisData || thisData.subs.length > 0;
+
+      if (thisRegionHasChildren) {
+        importRegion(thisKey).then(() => {
+          this.forceUpdate();
+        });
+      }
+    };
 
     if (countryHasChildren) {
-      importPromises.push(importRegion(country));
-    }
-
-    if (thisRegionHasChildren) {
-      importPromises.push(importRegion(thisKey));
-    }
-
-    if (importPromises.length > 0) {
-      Promise.all(importPromises).then(() => {
+      importRegion(country).then(() => {
         this.forceUpdate();
+        fetchRegionIfNeeded();
       });
+    } else {
+      fetchRegionIfNeeded();
     }
   }
 
@@ -191,18 +190,18 @@ class RegionSelect extends ReactQueryParams {
   };
 
   pinKeyToggle = (key, val) => {
-    const { pinnedKeys, defaultSeriesInfo } = fixQueryParams(this.queryParams);
+    const { pinnedKeys, selectedInfo } = fixQueryParams(this.queryParams);
     const newPinnedKeys = new Map(pinnedKeys);
     const returnPayload = {};
     if (pinnedKeys.has(key)) {
       // const { [key]: _, ...newPinned } = pinnedKeys;
       newPinnedKeys.delete(key);
     } else {
-      newPinnedKeys.set(key, defaultSeriesInfo);
+      newPinnedKeys.set(key, selectedInfo);
       const allColors = [...newPinnedKeys.values()].map(
         (seriesInfo) => seriesInfo.color
       );
-      returnPayload.defaultSeriesInfo = {
+      returnPayload.selectedInfo = {
         color: generateNewColors(allColors),
       };
     }
@@ -235,7 +234,7 @@ class RegionSelect extends ReactQueryParams {
       state,
       county,
       pinnedKeys,
-      defaultSeriesInfo,
+      selectedInfo,
       isLog,
       showJhu,
       startDate,
@@ -270,13 +269,13 @@ class RegionSelect extends ReactQueryParams {
         <SelectedSeries
           key={seriesKey}
           seriesKey={seriesKey}
-          seriesInfo={defaultSeriesInfo}
+          seriesInfo={selectedInfo}
           pinKeyToggle={this.pinKeyToggle}
           showSingleColor={showSingleColor}
         />
       );
 
-      pinnedGraphInfo.push([seriesKey, defaultSeriesInfo]);
+      pinnedGraphInfo.push([seriesKey, selectedInfo]);
     } else {
       viewedSeries.push(
         <SelectedSeries empty showSingleColor={showSingleColor} />
