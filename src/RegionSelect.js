@@ -375,8 +375,8 @@ class RegionSelect extends ReactQueryParams {
           />
           {seriesKey === '' && (
             <IntroText>
-              Click a country to start
-              <div className="subIntro">Double click to pin and compare</div>
+              Double click to pin
+              <div className="subIntro">Click advanced for more</div>
             </IntroText>
           )}
         </RegionContainer>

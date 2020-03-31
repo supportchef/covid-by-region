@@ -1,9 +1,12 @@
 // this comment tells babel to convert jsx to calls to a function called jsx instead of React.createElement
 /** @jsx jsx */
-import { jsx } from '@emotion/core';
+import { css, jsx } from '@emotion/core';
 import styled from '@emotion/styled';
 import React, { Component } from 'react';
 import { mergeKeys, getLatest, formatNumber } from './dataLib';
+import Input from 'antd/lib/input';
+
+import 'antd/lib/input/style/index.css';
 
 // eslint-disable-next-line
 jsx;
@@ -49,6 +52,15 @@ const Caret = styled.span`
 `;
 
 class RegionSelect extends Component {
+  constructor(props) {
+    super(props);
+    this.state = { filter: null };
+  }
+
+  changeFilter = (evt) => {
+    this.setState({ filter: evt.target.value });
+  };
+
   render() {
     const {
       allData,
@@ -59,6 +71,8 @@ class RegionSelect extends Component {
       showAll,
       showJhu,
     } = this.props;
+
+    const { filter } = this.state;
 
     if (!showAll && dataKey === '') {
       return <SelectColumn></SelectColumn>;
@@ -94,35 +108,55 @@ class RegionSelect extends Component {
       );
     }
 
+    if (filter) {
+      const lowercaseFilter = filter.toLowerCase();
+      filteredRegions = filteredRegions.filter((region) =>
+        region.sub.toLowerCase().includes(lowercaseFilter)
+      );
+    }
+
     return (
-      <SelectColumn>
-        {showAll && (
-          <Region
-            onClick={onRegionClick(allRegion.sub, hasChildren(allRegion.sub))}
-            onDoubleClick={doubleClick}
-            selected={selected === ''}
-          >
-            <MainText>All</MainText>
-            <CaseNumbers>
-              {formatNumber(allRegion.confirm)}
-              <Caret />
-            </CaseNumbers>
-          </Region>
+      <div>
+        <SelectColumn>
+          {showAll && (
+            <Region
+              onClick={onRegionClick(allRegion.sub, hasChildren(allRegion.sub))}
+              onDoubleClick={doubleClick}
+              selected={selected === ''}
+            >
+              <MainText>All</MainText>
+              <CaseNumbers>
+                {formatNumber(allRegion.confirm)}
+                <Caret />
+              </CaseNumbers>
+            </Region>
+          )}
+          {filteredRegions.map((region) => (
+            <Region
+              onClick={onRegionClick(region.sub, hasChildren(region.sub))}
+              onDoubleClick={doubleClick}
+              selected={selected === region.sub}
+            >
+              <MainText>{region.sub}</MainText>
+              <CaseNumbers>
+                {formatNumber(region.confirm)}
+                <Caret>{hasChildren(region.sub) ? '▶' : ''}</Caret>
+              </CaseNumbers>
+            </Region>
+          ))}
+        </SelectColumn>
+        {sortedRegions.length > 0 && (
+          <Input
+            size="small"
+            onChange={this.changeFilter}
+            value={filter}
+            placeholder="Filter results"
+            css={css`
+              margin-top: 5px;
+            `}
+          />
         )}
-        {filteredRegions.map((region) => (
-          <Region
-            onClick={onRegionClick(region.sub, hasChildren(region.sub))}
-            onDoubleClick={doubleClick}
-            selected={selected === region.sub}
-          >
-            <MainText>{region.sub}</MainText>
-            <CaseNumbers>
-              {formatNumber(region.confirm)}
-              <Caret>{hasChildren(region.sub) ? '▶' : ''}</Caret>
-            </CaseNumbers>
-          </Region>
-        ))}
-      </SelectColumn>
+      </div>
     );
   }
 }

@@ -31,6 +31,13 @@ export const SeriesRowContainer = styled.div`
   margin-top: 8px;
 `;
 
+export const CopyLink = styled.div`
+  margin-bottom: 8px;
+  cursor: pointer;
+  font-weight: bold;
+  color: #1790ff;
+`;
+
 export const AlteredForm = styled.div`
   & .ant-form-item {
     margin-bottom: 10px;
@@ -107,6 +114,9 @@ class GraphSettings extends Component {
           destroyOnClose
         >
           <AlteredForm>
+            {/*<CopyLink onClick={this.copyUrl}>
+              Click to copy link to your graphs
+            </CopyLink>*/}
             <Form layout="horizontal">
               <Form.Item>
                 <Checkbox
