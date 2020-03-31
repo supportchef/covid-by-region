@@ -81,6 +81,7 @@ class GraphSettings extends Component {
       changeStartDate,
       startValue,
       changeStartValue,
+      mobileTitle,
     } = this.props;
     const { graphSettingsVisible } = this.state;
 
@@ -95,7 +96,7 @@ class GraphSettings extends Component {
           size="small"
           onClick={this.setAdvancedOverlay(true)}
         >
-          Advanced Graph Settings
+          {mobileTitle ? 'Advanced Graph Settings' : 'Advanced'}
         </Button>
         <Modal
           title={`Advanced Graph Settings`}

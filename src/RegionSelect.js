@@ -92,6 +92,25 @@ export const LogSwitchButton = styled.span`
   }
 `;
 
+export const GraphSettingsContainer = styled.span`
+  position: absolute;
+  right: 0;
+  top: -10px;
+  font-size: 10px;
+  cursor: pointer;
+
+  @media only screen and (max-width: 600px) {
+    display: none;
+  }
+`;
+
+export const MobileOnly = styled.span`
+  display: none;
+  @media only screen and (max-width: 600px) {
+    display: initial;
+  }
+`;
+
 export const IntroText = styled.div`
   position: absolute;
   font-size: 30px;
@@ -291,36 +310,43 @@ class RegionSelect extends ReactQueryParams {
       startValue,
     };
 
+    const graphSettings = {
+      isLog: isLog,
+      flipLog: this.flipLog,
+      showJhu: showJhu,
+      flipJhu: this.flipJhu,
+      startDate: startDate,
+      changeStartDate: this.changeStartDate,
+      startValue: startValue,
+      changeStartValue: this.changeStartValue,
+    };
+
     return (
       <div>
         <BoxedContainer>
           <GraphContainer>
             <SingleGraphContainer>
-              Confirmed Cases
               <LogSwitchButton onClick={this.flipLog}>
                 {isLog ? 'Switch to Linear' : 'Switch to Log'}
               </LogSwitchButton>
+              Confirmed Cases
               <SingleGraph className="chart-container">
                 <GraphData fieldName="confirm" {...commonGraphData} />
               </SingleGraph>
             </SingleGraphContainer>
             <SingleGraphContainer>
+              <GraphSettingsContainer>
+                <GraphSettings {...graphSettings} />
+              </GraphSettingsContainer>
               Deaths
               <SingleGraph className="chart-container">
                 <GraphData fieldName="dead" {...commonGraphData} />
               </SingleGraph>
             </SingleGraphContainer>
           </GraphContainer>
-          <GraphSettings
-            isLog={isLog}
-            flipLog={this.flipLog}
-            showJhu={showJhu}
-            flipJhu={this.flipJhu}
-            startDate={startDate}
-            changeStartDate={this.changeStartDate}
-            startValue={startValue}
-            changeStartValue={this.changeStartValue}
-          />
+          <MobileOnly>
+            <GraphSettings {...graphSettings} mobileTitle />
+          </MobileOnly>
           <CurrentDisplayInfo>{viewedSeries}</CurrentDisplayInfo>
         </BoxedContainer>
         <RegionContainer>
