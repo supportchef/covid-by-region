@@ -149,7 +149,7 @@ class RegionSelect extends ReactQueryParams {
   }
 
   setQueryParamsWrapper = (newQueryParams) => {
-    const { country, state } = this.queryParams;
+    const { country, state } = fixQueryParams(this.queryParams);
     const { country: nextCountry, state: nextState } = newQueryParams;
 
     this.setQueryParams(newQueryParams);

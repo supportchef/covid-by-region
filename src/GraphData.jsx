@@ -123,6 +123,25 @@ const xValsEqual = (x1, x2) => {
   return x1 === x2;
 };
 
+// This is a really stupid fix
+// We overlay as many points as needed on top of the next point because:
+//  - log scales don't properly skip over NaN points
+//  - Tooltips actually work by index-into-the array count
+//
+// Our fix works by just stacking a bunch of points on the nearest value
+// as needed. (only in log mode)
+const getNextPair = (data, xTick) => {
+  let closestPairIdx = -1;
+  data.forEach((dataPair, idx) => {
+    if (dataPair.x > xTick) {
+      if (closestPairIdx === -1 || dataPair.x < data[closestPairIdx].x) {
+        closestPairIdx = idx;
+      }
+    }
+  });
+  return closestPairIdx;
+};
+
 const getDatasetData = (thisData, xAxis, fieldName, isLog) => {
   // Map to x + y cooridinates
   const data = thisData.map((row) => ({ y: row[fieldName], x: row.t }));
@@ -132,13 +151,18 @@ const getDatasetData = (thisData, xAxis, fieldName, isLog) => {
   // But we want to insert null values in general because it helps you
   // find places where data is missing
   // Todo: This is a _horrendous_ implementation - but low in line count :|
-  if (!isLog) {
-    xAxis.forEach((xTick) => {
-      if (!data.some((row) => xValsEqual(row.x, xTick))) {
+  xAxis.forEach((xTick) => {
+    if (!data.some((row) => xValsEqual(row.x, xTick))) {
+      if (!isLog) {
         data.push({ x: xTick, y: null });
+      } else {
+        const nextPairIdx = getNextPair(data, xTick);
+        if (nextPairIdx !== -1) {
+          data.push(data[nextPairIdx]);
+        }
       }
-    });
-  }
+    }
+  });
 
   // Sort by time
   const sortedData = data.sort((date1, date2) => date1.x - date2.x);
