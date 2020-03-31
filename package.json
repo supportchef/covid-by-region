@@ -22,11 +22,12 @@
     "recharts": "^1.8.5"
   },
   "scripts": {
-    "prebuild": "cd timeseriesScripts && node ./createTimeseries.js && cd ..",
+    "generate": "cd timeseriesScripts && node ./createTimeseries.js && cd ..",
+    "updateData": "git submodule update --remote && npm run generate",
     "start": "react-app-rewired start",
     "build": "react-app-rewired build",
     "test": "react-app-rewired test",
-    "deploy": "aws s3 sync build s3://www.covidbyregion.com --profile supportchef-prod",
+    "deploy": "npm run build && aws s3 sync build s3://www.covidbyregion.com --profile supportchef-prod",
     "eject": "react-scripts eject"
   },
   "eslintConfig": {
