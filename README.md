@@ -32,7 +32,7 @@ _Note: `npm ci` is similar to `npm install`, except it installs exact versions o
 
 Next you must generate the post-processed data:
 
-    npm run prebuild
+    npm run updateData
 
 Then you can run the project with:
 
@@ -42,10 +42,9 @@ Then you can run the project with:
 
 Currently the dataset is updating manually by running the following periodically:
 
-    git submodule update --remote
-    npm run prebuild
+    npm run updateData
 
-_Note: The deployed website can be newer than the pinned git hash of the submodules_
+_Note: The deployed website can be newer than the pinned git hash of the submodules, this command may also pull new submodules_
 
 ### Multiple datasets
 
