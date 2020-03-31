@@ -127,7 +127,7 @@ class RegionSelect extends ReactQueryParams {
       country: '',
       state: '',
       county: '',
-      pinnedKeys: [],
+      pinnedKeys: encodeURI(JSON.stringify([])),
       isLog: false,
       showJhu: false,
       startDate: null,
@@ -217,6 +217,7 @@ class RegionSelect extends ReactQueryParams {
     const { pinnedKeys, selectedInfo } = fixQueryParams(this.queryParams);
     const newPinnedKeys = new Map(pinnedKeys);
     const returnPayload = {};
+
     if (pinnedKeys.has(key)) {
       // const { [key]: _, ...newPinned } = pinnedKeys;
       newPinnedKeys.delete(key);
@@ -229,8 +230,16 @@ class RegionSelect extends ReactQueryParams {
         color: generateNewColors(allColors),
       };
     }
-    // return returnPayload;
+
     returnPayload.pinnedKeys = [...newPinnedKeys.entries()];
+    returnPayload.pinnedKeys = encodeURI(
+      JSON.stringify(returnPayload.pinnedKeys)
+    );
+    if (returnPayload.selectedInfo) {
+      returnPayload.selectedInfo = encodeURI(
+        JSON.stringify(returnPayload.selectedInfo)
+      );
+    }
     this.setQueryParams(returnPayload);
   };
 

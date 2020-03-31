@@ -7,8 +7,10 @@ export default function (queryParams) {
       newQueryParams[key] = moment(
         decodeURIComponent(value).replace(/\"/g, '')
       );
+    } else if (key === 'selectedInfo' && typeof value === 'string') {
+      newQueryParams[key] = JSON.parse(decodeURIComponent(value));
     } else if (key === 'pinnedKeys') {
-      newQueryParams[key] = new Map(value);
+      newQueryParams[key] = new Map(JSON.parse(decodeURIComponent(value)));
     } else if (typeof value === 'string') {
       newQueryParams[key] = decodeURIComponent(value);
     } else {
