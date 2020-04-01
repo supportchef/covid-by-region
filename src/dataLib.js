@@ -40,6 +40,16 @@ export function formatNumber(n) {
   return n.toLocaleString();
 }
 
+export function categoryNameMapping(internalCatName) {
+  const mapping = {
+    confirm: 'confirmed cases',
+    dead: 'deaths',
+    rec: 'recovered',
+    act: 'active cases',
+  };
+  return mapping[internalCatName];
+}
+
 const availableColors = [
   // Orange, Purple
   ['255, 159, 64', '153, 102, 255'],

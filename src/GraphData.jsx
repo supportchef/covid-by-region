@@ -4,11 +4,12 @@ import {
   formatNumber,
   formatNumberSuffix,
   getColor,
+  categoryNameMapping,
 } from './dataLib';
 import { Line } from 'react-chartjs-2';
 import moment from 'moment';
 
-const getOptions = (isLog, startValue) => ({
+const getOptions = (isLog, startValue, startType) => ({
   scales: {
     xAxes: [
       {
@@ -23,7 +24,7 @@ const getOptions = (isLog, startValue) => ({
           display: startValue !== null,
           labelString: `Days since ${
             startValue && formatNumber(startValue)
-          } cases`,
+          } ${categoryNameMapping(startType)}`,
         },
       },
     ],
@@ -74,12 +75,14 @@ const getOptions = (isLog, startValue) => ({
           const day = Math.abs(lbl) <= 1 ? 'day' : 'days';
           const startValueFmt = formatNumber(startValue);
 
+          const casesLbl = categoryNameMapping(startType);
+
           if (lbl > 0) {
-            return `${lbl} ${day} since ${startValueFmt} cases`;
+            return `${lbl} ${day} since ${startValueFmt} ${casesLbl}`;
           } else if (lbl < 0) {
-            return `${-lbl} ${day} until ${startValueFmt} cases`;
+            return `${-lbl} ${day} until ${startValueFmt} ${casesLbl}`;
           }
-          return `The day ${startValueFmt} cases occured`;
+          return `The day ${startValueFmt} ${casesLbl} occured`;
         }
         return moment(lbl).format('MMM Do YYYY');
       },
@@ -176,7 +179,8 @@ const getData = (
   showSingleColor,
   startDate,
   startValue,
-  isLog
+  isLog,
+  startType
 ) => {
   const cleanedDataKeyed = {};
 
@@ -202,7 +206,7 @@ const getData = (
     }
 
     if (isStartValue) {
-      const startValueFieldName = fieldName;
+      const startValueFieldName = startType;
       let firstIndex = cleanedData.findIndex(
         (row) => row[startValueFieldName] >= startValue
       );
@@ -263,7 +267,10 @@ export default class GraphData extends PureComponent {
       showSingleColor,
       startDate,
       startValue,
+      startType,
     } = this.props;
+
+    const safeStartType = startType !== null ? startType : fieldName;
 
     const data = getData(
       allData,
@@ -272,10 +279,17 @@ export default class GraphData extends PureComponent {
       showSingleColor,
       startDate,
       startValue,
-      isLog
+      isLog,
+      safeStartType
     );
+
     console.log('data', data);
 
-    return <Line data={data} options={getOptions(isLog, startValue)} />;
+    return (
+      <Line
+        data={data}
+        options={getOptions(isLog, startValue, safeStartType)}
+      />
+    );
   }
 }

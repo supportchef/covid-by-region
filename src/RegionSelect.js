@@ -132,6 +132,7 @@ class RegionSelect extends ReactQueryParams {
       showJhu: false,
       startDate: null,
       startValue: null,
+      startType: null,
       selectedInfo: {
         color: 1,
       },
@@ -261,6 +262,10 @@ class RegionSelect extends ReactQueryParams {
     this.setQueryParams({ startValue });
   };
 
+  changeStartType = (startType) => {
+    this.setQueryParams({ startType });
+  };
+
   render() {
     const {
       country,
@@ -272,6 +277,7 @@ class RegionSelect extends ReactQueryParams {
       showJhu,
       startDate,
       startValue,
+      startType,
     } = fixQueryParams(this.queryParams);
 
     const stateId = state ? mergeKeys(country, state) : '';
@@ -322,6 +328,7 @@ class RegionSelect extends ReactQueryParams {
       showSingleColor,
       startDate,
       startValue,
+      startType,
     };
 
     const graphSettings = {
@@ -333,6 +340,8 @@ class RegionSelect extends ReactQueryParams {
       changeStartDate: this.changeStartDate,
       startValue: startValue,
       changeStartValue: this.changeStartValue,
+      startType: startType,
+      changeStartType: this.changeStartType,
     };
 
     return (
