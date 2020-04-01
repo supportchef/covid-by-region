@@ -270,7 +270,7 @@ export default class GraphData extends PureComponent {
       startType,
     } = this.props;
 
-    const safeStartType = startType !== null ? startType : fieldName;
+    const safeStartType = startType !== '' ? startType : fieldName;
 
     const data = getData(
       allData,

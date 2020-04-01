@@ -11,6 +11,7 @@ import Form from 'antd/lib/form';
 // import Input from 'antd/lib/input';
 import InputNumber from 'antd/lib/input-number';
 import DatePicker from 'antd/lib/date-picker';
+import Select from 'antd/lib/select';
 
 import 'antd/lib/button/style/index.css';
 import 'antd/lib/checkbox/style/index.css';
@@ -19,6 +20,9 @@ import 'antd/lib/form/style/index.css';
 import 'antd/lib/input/style/index.css';
 import 'antd/lib/input-number/style/index.css';
 import 'antd/lib/date-picker/style/index.css';
+import 'antd/lib/select/style/index.css';
+
+const { Option } = Select;
 
 // eslint-disable-next-line
 jsx;
@@ -46,12 +50,16 @@ export const AlteredForm = styled.div`
 
 export const StartNumCasesContainer = styled.div`
   height: ${({ isStartFromNumberOfCases }) =>
-    isStartFromNumberOfCases ? '42px' : '0px'};
+    isStartFromNumberOfCases ? '84px' : '0px'};
   overflow: hidden;
   transition: height 0.5s cubic-bezier(0.78, 0.14, 0.15, 0.86);
 
   & .ant-col {
     flex: 0 1 auto !important;
+  }
+
+  & .ant-select {
+    width: 150px;
   }
 `;
 
@@ -89,6 +97,8 @@ class GraphSettings extends Component {
       startValue,
       changeStartValue,
       mobileTitle,
+      startType,
+      changeStartType,
     } = this.props;
     const { graphSettingsVisible } = this.state;
 
@@ -143,6 +153,13 @@ class GraphSettings extends Component {
                     parser={(value) => value.replace(/\$\s?|(,*)/g, '')}
                     onChange={changeStartValue}
                   />
+                </Form.Item>
+                <Form.Item label="Type to align">
+                  <Select value={startType} onChange={changeStartType}>
+                    <Option value="">What's Graphed</Option>
+                    <Option value="confirm">Confirmed Cases</Option>
+                    <Option value="dead">Deaths</Option>
+                  </Select>
                 </Form.Item>
               </StartNumCasesContainer>
               <Form.Item>
