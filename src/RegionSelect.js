@@ -10,8 +10,12 @@ import SelectedSeries from './SelectedSeries';
 import GraphSettings from './GraphSettings';
 import { mergeKeys, generateNewColors } from './dataLib';
 import fixQueryParams from './misc/fixQueryParams';
+import Select from 'antd/lib/select';
 
 import mainData from './timeseriesData/index';
+
+import 'antd/lib/select/style/index.css';
+const { Option } = Select;
 
 // eslint-disable-next-line
 jsx;
@@ -132,7 +136,9 @@ class RegionSelect extends ReactQueryParams {
       showJhu: false,
       startDate: null,
       startValue: null,
-      startType: null,
+      startType: '',
+      graphA: 'confirm',
+      graphB: 'dead',
       selectedInfo: {
         color: 1,
       },
@@ -266,6 +272,10 @@ class RegionSelect extends ReactQueryParams {
     this.setQueryParams({ startType });
   };
 
+  changeGraphType = (graphKey) => (newType) => {
+    this.setQueryParams({ [graphKey]: newType });
+  };
+
   render() {
     const {
       country,
@@ -278,6 +288,8 @@ class RegionSelect extends ReactQueryParams {
       startDate,
       startValue,
       startType,
+      graphA,
+      graphB,
     } = fixQueryParams(this.queryParams);
 
     const stateId = state ? mergeKeys(country, state) : '';
@@ -321,6 +333,11 @@ class RegionSelect extends ReactQueryParams {
       );
     }
 
+    const graphOptions = [
+      <Option value="confirm">Confirmed Cases</Option>,
+      <Option value="dead">Deaths</Option>,
+    ];
+
     const commonGraphData = {
       allData,
       seriesInfo: pinnedGraphInfo,
@@ -352,18 +369,34 @@ class RegionSelect extends ReactQueryParams {
               <LogSwitchButton onClick={this.flipLog}>
                 {isLog ? 'Switch to Linear' : 'Switch to Log'}
               </LogSwitchButton>
-              Confirmed Cases
+              <Select
+                size="small"
+                bordered={false}
+                dropdownMatchSelectWidth={140}
+                value={graphA}
+                onChange={this.changeGraphType('graphA')}
+              >
+                {graphOptions}
+              </Select>
               <SingleGraph className="chart-container">
-                <GraphData fieldName="confirm" {...commonGraphData} />
+                <GraphData fieldName={graphA} {...commonGraphData} />
               </SingleGraph>
             </SingleGraphContainer>
             <SingleGraphContainer>
               <GraphSettingsContainer>
                 <GraphSettings {...graphSettings} />
               </GraphSettingsContainer>
-              Deaths
+              <Select
+                size="small"
+                bordered={false}
+                dropdownMatchSelectWidth={140}
+                value={graphB}
+                onChange={this.changeGraphType('graphB')}
+              >
+                {graphOptions}
+              </Select>
               <SingleGraph className="chart-container">
-                <GraphData fieldName="dead" {...commonGraphData} />
+                <GraphData fieldName={graphB} {...commonGraphData} />
               </SingleGraph>
             </SingleGraphContainer>
           </GraphContainer>
