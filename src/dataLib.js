@@ -55,6 +55,25 @@ const newCasesMaps = {
   deadNew: 'dead',
 };
 
+const rollingAveragesMaps = {
+  confirm7Day: {
+    sourceField: "confirm",
+    numDays: 7,
+  },
+  dead7Day: {
+    sourceField: "dead",
+    numDays: 7,
+  },
+  confirm14Day: {
+    sourceField: "confirm",
+    numDays: 14,
+  },
+  dead14Day: {
+    sourceField: "dead",
+    numDays: 14,
+  },
+}
+
 export function ensureDataHasFieldName(data, fieldName) {
   if (fieldName in newCasesMaps) {
     const sourceField = newCasesMaps[fieldName];
@@ -63,6 +82,19 @@ export function ensureDataHasFieldName(data, fieldName) {
     data.forEach((row) => {
       row[fieldName] = row[sourceField] - lastValue;
       lastValue = row[sourceField];
+    });
+  } else if (fieldName in rollingAveragesMaps) {
+    const rollingAverageMetdata = rollingAveragesMaps[fieldName];
+    const sourceField = rollingAverageMetdata.sourceField;
+    const numDays = rollingAverageMetdata.numDays;
+
+    let previousValues = [];
+    let lastValue = 0;
+    data.forEach((row) => {
+      previousValues.push(row[sourceField] - lastValue);
+      lastValue = row[sourceField];
+      const lastWeek = previousValues.slice(-1 * numDays);
+      row[fieldName] = lastWeek.reduce((x, y) => x + y) / numDays;
     });
   }
 
