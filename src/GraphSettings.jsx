@@ -104,7 +104,7 @@ class GraphSettings extends Component {
 
     const isStartFromNumberOfCases = startValue !== null;
 
-    console.log('startValue', startValue);
+    // console.log('startValue', startValue);
 
     return (
       <SeriesRowContainer>

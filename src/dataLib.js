@@ -40,12 +40,23 @@ export function formatNumber(n) {
   return n.toLocaleString();
 }
 
+export function categoryColorNameMapping(internalCatName) {
+  if (internalCatName === 'confirm') {
+    return 'Confirmed';
+  }
+  console.log('internalCatName', internalCatName);
+  const name = categoryNameMapping(internalCatName);
+  return name.charAt(0).toUpperCase() + name.slice(1);
+}
+
 export function categoryNameMapping(internalCatName) {
   const mapping = {
     confirm: 'confirmed cases',
     dead: 'deaths',
     rec: 'recovered',
     act: 'active cases',
+    confirmNew: 'new cases',
+    deadNew: 'new deaths',
   };
   return mapping[internalCatName];
 }
@@ -109,5 +120,5 @@ export const generateNewColors = (issuedColors) => {
 
 export const getColor = (colorIndex) => {
   const [confirm] = availableColors[colorIndex];
-  return { confirm, dead: '255,99,132' };
+  return [confirm, '255,99,132'];
 };

@@ -183,7 +183,8 @@ const getData = (
   startDate,
   startValue,
   isLog,
-  startType
+  startType,
+  graphIndex
 ) => {
   const cleanedDataKeyed = {};
 
@@ -229,7 +230,7 @@ const getData = (
 
   const xAxis = getXAxis(cleanedDataKeyed, isStartValue);
 
-  const colorName = showSingleColor ? 'confirm' : fieldName;
+  const colorIndex = showSingleColor ? 0 : graphIndex;
 
   // console.log('xAxis', xAxis);
   return {
@@ -238,19 +239,19 @@ const getData = (
       label: info.label || getNameFromKey(key),
       fill: false,
       lineTension: 0.1,
-      backgroundColor: `rgba(${getColor(info.color)[colorName]},1)`,
-      borderColor: `rgba(${getColor(info.color)[colorName]},1)`,
+      backgroundColor: `rgba(${getColor(info.color)[colorIndex]},1)`,
+      borderColor: `rgba(${getColor(info.color)[colorIndex]},1)`,
       borderCapStyle: 'butt',
       borderDash: [],
       borderDashOffset: 0.0,
       borderJoinStyle: 'miter',
-      hoverBackgroundColor: `rgba(${getColor(info.color)[colorName]},1)`,
-      pointBorderColor: `rgba(${getColor(info.color)[colorName]},1)`,
-      pointBackgroundColor: `rgba(${getColor(info.color)[colorName]},1)`,
+      hoverBackgroundColor: `rgba(${getColor(info.color)[colorIndex]},1)`,
+      pointBorderColor: `rgba(${getColor(info.color)[colorIndex]},1)`,
+      pointBackgroundColor: `rgba(${getColor(info.color)[colorIndex]},1)`,
       pointBorderWidth: 1,
       pointHoverRadius: 5,
-      pointHoverBackgroundColor: `rgba(${getColor(info.color)[colorName]},1)`,
-      pointHoverBorderColor: `rgba(${getColor(info.color)[colorName]},1)`,
+      pointHoverBackgroundColor: `rgba(${getColor(info.color)[colorIndex]},1)`,
+      pointHoverBorderColor: `rgba(${getColor(info.color)[colorIndex]},1)`,
       pointHoverBorderWidth: 2,
       pointRadius: 2,
       pointHitRadius: 10,
@@ -271,6 +272,7 @@ export default class GraphData extends PureComponent {
       startDate,
       startValue,
       startType,
+      graphIndex,
     } = this.props;
 
     const safeStartType = startType !== '' ? startType : fieldName;
@@ -283,10 +285,11 @@ export default class GraphData extends PureComponent {
       startDate,
       startValue,
       isLog,
-      safeStartType
+      safeStartType,
+      graphIndex
     );
 
-    console.log('data', data);
+    // console.log('data', data);
 
     return (
       <Line

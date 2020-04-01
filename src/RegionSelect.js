@@ -294,7 +294,7 @@ class RegionSelect extends ReactQueryParams {
 
     const stateId = state ? mergeKeys(country, state) : '';
     const seriesKey = mergeKeys(country, state, county);
-    console.log('seriesKey', seriesKey);
+    // console.log('seriesKey', seriesKey);
 
     const newSelectedSeries = !pinnedKeys.has(seriesKey);
     const showSingleColor =
@@ -311,6 +311,8 @@ class RegionSelect extends ReactQueryParams {
         pinKeyToggle={this.pinKeyToggle}
         seriesInfo={seriesInfo}
         showSingleColor={showSingleColor}
+        graphA={graphA}
+        graphB={graphB}
       />
     ));
 
@@ -323,6 +325,8 @@ class RegionSelect extends ReactQueryParams {
           seriesInfo={selectedInfo}
           pinKeyToggle={this.pinKeyToggle}
           showSingleColor={showSingleColor}
+          graphA={graphA}
+          graphB={graphB}
         />
       );
 
@@ -382,7 +386,11 @@ class RegionSelect extends ReactQueryParams {
                 {graphOptions}
               </Select>
               <SingleGraph className="chart-container">
-                <GraphData fieldName={graphA} {...commonGraphData} />
+                <GraphData
+                  fieldName={graphA}
+                  graphIndex={0}
+                  {...commonGraphData}
+                />
               </SingleGraph>
             </SingleGraphContainer>
             <SingleGraphContainer>
@@ -399,7 +407,11 @@ class RegionSelect extends ReactQueryParams {
                 {graphOptions}
               </Select>
               <SingleGraph className="chart-container">
-                <GraphData fieldName={graphB} {...commonGraphData} />
+                <GraphData
+                  fieldName={graphB}
+                  graphIndex={1}
+                  {...commonGraphData}
+                />
               </SingleGraph>
             </SingleGraphContainer>
           </GraphContainer>

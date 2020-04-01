@@ -3,7 +3,7 @@
 import { jsx } from '@emotion/core';
 import styled from '@emotion/styled';
 import React, { Component } from 'react';
-import { getNameFromKey, getColor } from './dataLib';
+import { getNameFromKey, getColor, categoryColorNameMapping } from './dataLib';
 import Checkbox from 'antd/lib/checkbox';
 
 import 'antd/lib/checkbox/style/index.css';
@@ -37,7 +37,7 @@ export const SideContainer = styled.div`
 export const ColorContainer = styled.div`
   display: flex;
   flex-direction: column;
-  width: 75px;
+  width: 80px;
 `;
 export const ColorRow = styled.div`
   display: flex;
@@ -57,7 +57,7 @@ export const EmptyText = styled.div`
   color: grey;
 `;
 export const RightContainer = styled.div`
-  width: 75px;
+  width: 80px;
 `;
 
 class SelectedSeries extends Component {
@@ -69,6 +69,8 @@ class SelectedSeries extends Component {
       seriesInfo,
       empty,
       showSingleColor,
+      graphA,
+      graphB,
     } = this.props;
 
     if (empty) {
@@ -86,21 +88,21 @@ class SelectedSeries extends Component {
     const name = getNameFromKey(seriesKey);
 
     const deadColor = showSingleColor
-      ? getColor(seriesInfo.color).confirm
-      : getColor(seriesInfo.color).dead;
+      ? getColor(seriesInfo.color)[0]
+      : getColor(seriesInfo.color)[1];
 
     return (
       <SeriesRowContainer>
         <SeriesRow>
           <ColorContainer>
             <ColorRow>
-              <ColorSwatch color={getColor(seriesInfo.color).confirm} />
-              {showSingleColor ? 'Color' : 'Confirmed'}
+              <ColorSwatch color={getColor(seriesInfo.color)[0]} />
+              {showSingleColor ? 'Color' : categoryColorNameMapping(graphA)}
             </ColorRow>
             {!showSingleColor && (
               <ColorRow>
                 <ColorSwatch color={deadColor} />
-                Deaths
+                {categoryColorNameMapping(graphB)}
               </ColorRow>
             )}
           </ColorContainer>
