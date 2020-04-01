@@ -50,6 +50,25 @@ export function categoryNameMapping(internalCatName) {
   return mapping[internalCatName];
 }
 
+const newCasesMaps = {
+  confirmNew: 'confirm',
+  deadNew: 'dead',
+};
+
+export function ensureDataHasFieldName(data, fieldName) {
+  if (fieldName in newCasesMaps) {
+    const sourceField = newCasesMaps[fieldName];
+
+    let lastValue = 0;
+    data.forEach((row) => {
+      row[fieldName] = row[sourceField] - lastValue;
+      lastValue = row[sourceField];
+    });
+  }
+
+  return data;
+}
+
 const availableColors = [
   // Orange, Purple
   ['255, 159, 64', '153, 102, 255'],

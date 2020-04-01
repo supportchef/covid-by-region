@@ -5,6 +5,7 @@ import {
   formatNumberSuffix,
   getColor,
   categoryNameMapping,
+  ensureDataHasFieldName,
 } from './dataLib';
 import { Line } from 'react-chartjs-2';
 import moment from 'moment';
@@ -146,6 +147,8 @@ const getNextPair = (data, xTick) => {
 };
 
 const getDatasetData = (thisData, xAxis, fieldName, isLog) => {
+  ensureDataHasFieldName(thisData, fieldName);
+
   // Map to x + y cooridinates
   const data = thisData.map((row) => ({ y: row[fieldName], x: row.t }));
 

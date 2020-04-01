@@ -333,9 +333,12 @@ class RegionSelect extends ReactQueryParams {
       );
     }
 
+    const graphOptionsWidth = 140;
     const graphOptions = [
       <Option value="confirm">Confirmed Cases</Option>,
       <Option value="dead">Deaths</Option>,
+      <Option value="confirmNew">New Cases</Option>,
+      <Option value="deadNew">New Deaths</Option>,
     ];
 
     const commonGraphData = {
@@ -372,7 +375,7 @@ class RegionSelect extends ReactQueryParams {
               <Select
                 size="small"
                 bordered={false}
-                dropdownMatchSelectWidth={140}
+                dropdownMatchSelectWidth={graphOptionsWidth}
                 value={graphA}
                 onChange={this.changeGraphType('graphA')}
               >
@@ -389,7 +392,7 @@ class RegionSelect extends ReactQueryParams {
               <Select
                 size="small"
                 bordered={false}
-                dropdownMatchSelectWidth={140}
+                dropdownMatchSelectWidth={graphOptionsWidth}
                 value={graphB}
                 onChange={this.changeGraphType('graphB')}
               >
