@@ -57,6 +57,10 @@ export function categoryNameMapping(internalCatName) {
     act: 'active cases',
     confirmNew: 'new cases',
     deadNew: 'new deaths',
+    confirm7Day: 'new cases',
+    dead7Day: 'new deaths',
+    confirm14Day: 'new cases',
+    dead14Day: 'new deaths',
   };
   return mapping[internalCatName];
 }
@@ -68,22 +72,22 @@ const newCasesMaps = {
 
 const rollingAveragesMaps = {
   confirm7Day: {
-    sourceField: "confirm",
+    sourceField: 'confirm',
     numDays: 7,
   },
   dead7Day: {
-    sourceField: "dead",
+    sourceField: 'dead',
     numDays: 7,
   },
   confirm14Day: {
-    sourceField: "confirm",
+    sourceField: 'confirm',
     numDays: 14,
   },
   dead14Day: {
-    sourceField: "dead",
+    sourceField: 'dead',
     numDays: 14,
   },
-}
+};
 
 export function ensureDataHasFieldName(data, fieldName) {
   if (fieldName in newCasesMaps) {
