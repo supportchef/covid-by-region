@@ -2,7 +2,7 @@
 /** @jsx jsx */
 import { jsx } from '@emotion/core';
 import styled from '@emotion/styled';
-import React, { Component } from 'react';
+import React from 'react';
 import ReactQueryParams from 'react-query-params';
 import RegionColumn from './RegionColumn';
 import GraphData from './GraphData';
