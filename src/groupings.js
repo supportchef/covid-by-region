@@ -1,5 +1,5 @@
 export const staticGroupings = {
-  '!US minus NYC': {
+  '!US minus NY': {
     add: ['US'],
     subtract: ['US$New York'],
   },
