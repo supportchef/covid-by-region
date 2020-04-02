@@ -337,12 +337,16 @@ class RegionSelect extends ReactQueryParams {
       );
     }
 
-    const graphOptionsWidth = 140;
+    const graphOptionsWidth = 250;
     const graphOptions = [
       <Option value="confirm">Confirmed Cases</Option>,
       <Option value="dead">Deaths</Option>,
       <Option value="confirmNew">New Cases</Option>,
       <Option value="deadNew">New Deaths</Option>,
+      <Option value="confirm7Day">New Cases (7 day rolling average)</Option>,
+      <Option value="dead7Day">New Deaths (7 day rolling average)</Option>,
+      <Option value="confirm14Day">New Cases (14 day rolling average)</Option>,
+      <Option value="dead14Day">New Deaths (14 day rolling average)</Option>,
     ];
 
     const commonGraphData = {
