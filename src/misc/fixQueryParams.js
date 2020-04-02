@@ -5,7 +5,7 @@ export default function (queryParams) {
   Object.entries(queryParams).forEach(([key, value]) => {
     if (key === 'startDate' && value !== null) {
       newQueryParams[key] = moment(
-        decodeURIComponent(value).replace(/\"/g, '')
+        decodeURIComponent(value).replace(/"/g, '')
       );
     } else if (key === 'selectedInfo' && typeof value === 'string') {
       newQueryParams[key] = JSON.parse(decodeURIComponent(value));
