@@ -37,7 +37,9 @@ export function formatNumber(n) {
   if (n === undefined) {
     return n;
   }
-  return n.toLocaleString();
+  // round to one decimal place
+  const truncated = Math.round(n * 10) / 10;
+  return truncated.toLocaleString();
 }
 
 export function categoryColorNameMapping(internalCatName) {
