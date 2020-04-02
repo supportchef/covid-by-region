@@ -65,12 +65,15 @@ export function categoryNameMapping(internalCatName) {
   return mapping[internalCatName];
 }
 
-const newCasesMaps = {
-  confirmNew: 'confirm',
-  deadNew: 'dead',
-};
-
-const rollingAveragesMaps = {
+const derivedValuesMaps = {
+  confirmNew: {
+    sourceField: 'confirm',
+    numDays: 1,
+  },
+  deadNew: {
+    sourceField: 'dead',
+    numDays: 1,
+  },
   confirm7Day: {
     sourceField: 'confirm',
     numDays: 7,
@@ -90,18 +93,10 @@ const rollingAveragesMaps = {
 };
 
 export function ensureDataHasFieldName(data, fieldName) {
-  if (fieldName in newCasesMaps) {
-    const sourceField = newCasesMaps[fieldName];
-
-    let lastValue = 0;
-    data.forEach((row) => {
-      row[fieldName] = row[sourceField] - lastValue;
-      lastValue = row[sourceField];
-    });
-  } else if (fieldName in rollingAveragesMaps) {
-    const rollingAverageMetdata = rollingAveragesMaps[fieldName];
-    const sourceField = rollingAverageMetdata.sourceField;
-    const numDays = rollingAverageMetdata.numDays;
+  if (fieldName in derivedValuesMaps) {
+    const metadata = derivedValuesMaps[fieldName];
+    const sourceField = metadata.sourceField;
+    const numDays = metadata.numDays;
 
     let previousValues = [];
     let lastValue = 0;
