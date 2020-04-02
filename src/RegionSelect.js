@@ -34,6 +34,8 @@ const importRegion = (reg) => {
   return import(`./timeseriesData/${reg}`).then((contents) => {
     allData = { ...allData, ...contents };
     console.log('loaded new region', reg);
+  }).catch(() => {
+    console.log('failed to load region', reg);
   });
 };
 
