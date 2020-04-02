@@ -9,6 +9,12 @@ import GraphData from './GraphData';
 import SelectedSeries from './SelectedSeries';
 import GraphSettings from './GraphSettings';
 import { mergeKeys, generateNewColors } from './dataLib';
+import {
+  getSelectedGroups,
+  getKeysInGroup,
+  populateAllDataWithGroups,
+  isGrouping,
+} from './groupings';
 import fixQueryParams from './misc/fixQueryParams';
 import Select from 'antd/lib/select';
 
@@ -27,7 +33,7 @@ const importRegion = (reg) => {
   // console.log('importing region', reg);
   return import(`./timeseriesData/${reg}`).then((contents) => {
     allData = { ...allData, ...contents };
-    // console.log('loaded new region', allData);
+    console.log('loaded new region', reg);
   });
 };
 
@@ -137,6 +143,9 @@ class RegionSelect extends ReactQueryParams {
       startDate: null,
       startValue: null,
       startType: '',
+      groupsSelected: [],
+      customGroups: {},
+
       graphA: 'confirm',
       graphB: 'dead',
       selectedInfo: {
@@ -146,17 +155,41 @@ class RegionSelect extends ReactQueryParams {
   }
 
   componentDidMount() {
-    const { country, state, pinnedKeys } = fixQueryParams(this.queryParams);
-    this.fetchCountryState(country, state);
+    const { country, state, pinnedKeys, customGroups } = fixQueryParams(
+      this.queryParams
+    );
+    this.ensureCountryStateFetched(country, state, customGroups);
+
+    // Reverse of what you would normally expect b/c it's a Map
     pinnedKeys.forEach((value, pinnedKey) => {
-      console.log('pinnedKey', pinnedKey);
-      const [country, state] = pinnedKey.split('$');
-      this.fetchCountryState(country, state);
+      this.ensureKeyFetched(pinnedKey, customGroups);
     });
   }
 
+  ensureKeyFetched = (key, customGroups) => {
+    const [country, state] = key.split('$');
+    return this.ensureCountryStateFetched(country, state, customGroups);
+  };
+
+  ensureCountryStateFetched = (country, state, customGroups) => {
+    // In this case it's a group and not a country!
+    if (isGrouping(country)) {
+      if (allData[country]) {
+        return;
+      }
+      const keysToEnsureFetched = getKeysInGroup(country);
+      const keyFetchPromises = keysToEnsureFetched.map(this.ensureKeyFetched);
+
+      return Promise.all(keyFetchPromises).then(() => {
+        populateAllDataWithGroups(allData, country);
+        this.forceUpdate();
+      });
+    }
+    return this.fetchCountryState(country, state);
+  };
+
   setQueryParamsWrapper = (newQueryParams) => {
-    const { country, state } = fixQueryParams(this.queryParams);
+    const { country, state, customGroups } = fixQueryParams(this.queryParams);
     const { country: nextCountry, state: nextState } = newQueryParams;
 
     this.setQueryParams(newQueryParams);
@@ -165,7 +198,8 @@ class RegionSelect extends ReactQueryParams {
     if (nextCountry !== country || nextState !== state) {
       const safeCountry = nextCountry !== undefined ? nextCountry : country;
       const safeState = nextState !== undefined ? nextState : state;
-      this.fetchCountryState(safeCountry, safeState);
+
+      this.ensureCountryStateFetched(safeCountry, safeState, customGroups);
     }
   };
 
@@ -180,19 +214,19 @@ class RegionSelect extends ReactQueryParams {
       const thisRegionHasChildren = !thisData || thisData.subs.length > 0;
 
       if (thisRegionHasChildren) {
-        importRegion(thisKey).then(() => {
+        return importRegion(thisKey).then(() => {
           this.forceUpdate();
         });
       }
     };
 
     if (countryHasChildren) {
-      importRegion(country).then(() => {
+      return importRegion(country).then(() => {
         this.forceUpdate();
-        fetchRegionIfNeeded();
+        return fetchRegionIfNeeded();
       });
     } else {
-      fetchRegionIfNeeded();
+      return fetchRegionIfNeeded();
     }
   }
 
@@ -276,6 +310,10 @@ class RegionSelect extends ReactQueryParams {
     this.setQueryParams({ [graphKey]: newType });
   };
 
+  changeGroupsSelected = (groupsSelected) => {
+    this.setQueryParams({ groupsSelected });
+  };
+
   render() {
     const {
       country,
@@ -290,6 +328,7 @@ class RegionSelect extends ReactQueryParams {
       startType,
       graphA,
       graphB,
+      groupsSelected,
     } = fixQueryParams(this.queryParams);
 
     const stateId = state ? mergeKeys(country, state) : '';
@@ -337,6 +376,8 @@ class RegionSelect extends ReactQueryParams {
       );
     }
 
+    const selectedGroups = getSelectedGroups(groupsSelected);
+
     const graphOptionsWidth = 250;
     const graphOptions = [
       <Option value="confirm">Confirmed Cases</Option>,
@@ -357,6 +398,7 @@ class RegionSelect extends ReactQueryParams {
       startDate,
       startValue,
       startType,
+      selectedGroups,
     };
 
     const graphSettings = {
@@ -370,6 +412,8 @@ class RegionSelect extends ReactQueryParams {
       changeStartValue: this.changeStartValue,
       startType: startType,
       changeStartType: this.changeStartType,
+      groupsSelected,
+      changeGroupsSelected: this.changeGroupsSelected,
     };
 
     return (
@@ -428,6 +472,7 @@ class RegionSelect extends ReactQueryParams {
           <RegionColumn
             allData={allData}
             selected={country}
+            groupOptions={selectedGroups}
             dataKey=""
             showAll
             showJhu={showJhu}

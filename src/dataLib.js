@@ -1,3 +1,5 @@
+import { isGrouping, groupingToRegularName } from './groupings';
+
 export const mergeKeys = (key, subKey, subSubKey) => {
   const keyArray = [key, subKey, subSubKey].filter(
     (k) => k !== '' && k !== undefined
@@ -16,6 +18,9 @@ export const getLatest = (allData, key) => {
 export const getNameFromKey = (key) => {
   if (key === '') {
     return 'All';
+  }
+  if (isGrouping(key)) {
+    return groupingToRegularName(key);
   }
   return key.split('$').reverse().join(', ');
 };

@@ -4,6 +4,7 @@ import { jsx } from '@emotion/core';
 import styled from '@emotion/styled';
 import React, { Component } from 'react';
 import moment from 'moment';
+import { staticGroupings, groupingToRegularName } from './groupings';
 import Button from 'antd/lib/button';
 import Checkbox from 'antd/lib/checkbox';
 import Modal from 'antd/lib/modal';
@@ -99,6 +100,8 @@ class GraphSettings extends Component {
       mobileTitle,
       startType,
       changeStartType,
+      groupsSelected,
+      changeGroupsSelected,
     } = this.props;
     const { graphSettingsVisible } = this.state;
 
@@ -182,6 +185,20 @@ class GraphSettings extends Component {
                   onChange={changeStartDate}
                   value={startDate}
                 />
+              </Form.Item>
+              <Form.Item label="Custom groupings">
+                <Select
+                  mode="multiple"
+                  value={groupsSelected}
+                  onChange={changeGroupsSelected}
+                  dropdownRender={(menu) => <div>{menu}</div>}
+                >
+                  {Object.keys(staticGroupings).map((groupKey) => (
+                    <Option value={groupKey}>
+                      {groupingToRegularName(groupKey)}
+                    </Option>
+                  ))}
+                </Select>
               </Form.Item>
             </Form>
           </AlteredForm>

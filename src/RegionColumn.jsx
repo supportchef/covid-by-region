@@ -4,6 +4,7 @@ import { css, jsx } from '@emotion/core';
 import styled from '@emotion/styled';
 import React, { Component } from 'react';
 import { mergeKeys, getLatest, formatNumber } from './dataLib';
+import { groupingToRegularName } from './groupings';
 import Input from 'antd/lib/input';
 
 import 'antd/lib/input/style/index.css';
@@ -70,6 +71,7 @@ class RegionSelect extends Component {
       selected,
       showAll,
       showJhu,
+      groupOptions,
     } = this.props;
 
     const { filter } = this.state;
@@ -130,6 +132,21 @@ class RegionSelect extends Component {
                 <Caret />
               </CaseNumbers>
             </Region>
+          )}
+          {groupOptions && Object.keys(groupOptions).length > 0 && (
+            <div>
+              <b>Custom Groups</b>
+              {Object.keys(groupOptions).map((groupKey) => (
+                <Region
+                  onClick={onRegionClick(groupKey, false)}
+                  onDoubleClick={doubleClick}
+                  selected={selected === groupKey}
+                >
+                  <MainText>{groupingToRegularName(groupKey)}</MainText>
+                </Region>
+              ))}
+              <b>Countries</b>
+            </div>
           )}
           {filteredRegions.map((region) => (
             <Region

@@ -195,6 +195,10 @@ const getData = (
   });
 
   seriesInfoSafe.forEach(([key, info]) => {
+    if (!allData[key]) {
+      return;
+    }
+
     // Normalize the data with timestamps we can interpret
     let cleanedData = allData[key].series
       .map((row) => {
@@ -203,12 +207,14 @@ const getData = (
       })
       .reverse();
 
+    // Filter out results before a certain date
     if (startDate) {
       cleanedData = cleanedData.filter(
         (row) => row.t > startDate.clone().subtract(1, 'days')
       );
     }
 
+    // Shift things to start from the same Y axis value
     if (isStartValue) {
       const startValueFieldName = startType;
       let firstIndex = cleanedData.findIndex(
