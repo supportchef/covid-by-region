@@ -147,7 +147,7 @@ const issuedColorsHasIndex = (issuedColors, index) => {
 export const generateNewColors = (issuedColors) => {
   let index = 0;
   while (issuedColorsHasIndex(issuedColors, index)) {
-    if (index === availableColors.length) {
+    if (index === availableColors.length - 1) {
       index = Math.floor(Math.random() * availableColors.length);
       break;
     }
