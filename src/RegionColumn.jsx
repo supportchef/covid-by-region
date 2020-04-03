@@ -30,6 +30,12 @@ const SelectColumn = styled.div`
   width: 200px;
   overflow: scroll;
 `;
+
+const EmptySelectColumn = styled.div`
+  height: 300px;
+  width: 200px;
+`;
+
 const Region = styled.div`
   background: ${({ selected }) => (selected ? '#c5c5c5' : 'white')};
   cursor: pointer;
@@ -76,10 +82,12 @@ class RegionSelect extends Component {
 
     const { filter } = this.state;
 
+    // Column is empty
     if (!showAll && dataKey === '') {
-      return <SelectColumn></SelectColumn>;
+      return <EmptySelectColumn></EmptySelectColumn>;
     }
 
+    // If we don't yet have the data for this entry
     if (!allData[dataKey]) {
       return <SelectColumn>Loading {dataKey}</SelectColumn>;
     }
