@@ -5,6 +5,7 @@ import styled from '@emotion/styled';
 import React, { Component } from 'react';
 import moment from 'moment';
 import { staticGroupings, groupingToRegularName } from './groupings';
+import CreateCustomGrouping from './Groupings/CreateCustomGrouping';
 import Button from 'antd/lib/button';
 import Checkbox from 'antd/lib/checkbox';
 import Modal from 'antd/lib/modal';
@@ -80,11 +81,16 @@ class GraphSettings extends Component {
     this.state = {
       // deviceSelected: false,
       graphSettingsVisible: false,
+      customGroupingVisisble: false,
     };
   }
 
   setAdvancedOverlay = (graphSettingsVisible) => () => {
     this.setState({ graphSettingsVisible });
+  };
+
+  setCustomGrouping = (customGroupingVisisble) => () => {
+    this.setState({ customGroupingVisisble });
   };
 
   render() {
@@ -102,8 +108,10 @@ class GraphSettings extends Component {
       changeStartType,
       groupsSelected,
       changeGroupsSelected,
+      allData,
+      ensureCountryStateFetched,
     } = this.props;
-    const { graphSettingsVisible } = this.state;
+    const { graphSettingsVisible, customGroupingVisisble } = this.state;
 
     const isStartFromNumberOfCases = startValue !== null;
 
@@ -200,6 +208,23 @@ class GraphSettings extends Component {
                   ))}
                 </Select>
               </Form.Item>
+              <Button type="primary" onClick={this.setCustomGrouping(true)}>
+                Create Custom Group
+              </Button>
+              <Modal
+                title={`Create Custom Group`}
+                visible={!!customGroupingVisisble}
+                onOk={this.setCustomGrouping(false)}
+                onCancel={this.setCustomGrouping(false)}
+                footer={null}
+                width={720}
+                destroyOnClose
+              >
+                <CreateCustomGrouping
+                  allData={allData}
+                  ensureCountryStateFetched={ensureCountryStateFetched}
+                />
+              </Modal>
             </Form>
           </AlteredForm>
         </Modal>

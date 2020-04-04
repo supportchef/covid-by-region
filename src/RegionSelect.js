@@ -232,22 +232,10 @@ class RegionSelect extends ReactQueryParams {
 
   clickCountry = (reg, hasChildren) => () => {
     this.setQueryParamsWrapper({ country: reg, state: '', county: '' });
-    // hasChildren &&
-    //   importRegion(reg).then(() => {
-    //     console.log('finished loading reg');
-    //     this.forceUpdate();
-    //   });
   };
 
   clickState = (reg, hasChildren) => () => {
-    // const { country } = this.queryParams;
-    // const stateId = mergeKeys(country, reg);
     this.setQueryParamsWrapper({ state: reg, county: '' });
-    // hasChildren &&
-    //   importRegion(stateId).then(() => {
-    //     console.log('finished loading reg');
-    //     this.forceUpdate();
-    //   });
   };
 
   clickCounty = (reg) => () => {
@@ -414,6 +402,8 @@ class RegionSelect extends ReactQueryParams {
       changeStartType: this.changeStartType,
       groupsSelected,
       changeGroupsSelected: this.changeGroupsSelected,
+      allData,
+      ensureCountryStateFetched: this.ensureCountryStateFetched,
     };
 
     return (
