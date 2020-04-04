@@ -177,11 +177,11 @@ class RegionSelect extends ReactQueryParams {
       if (allData[country]) {
         return;
       }
-      const keysToEnsureFetched = getKeysInGroup(country);
+      const keysToEnsureFetched = getKeysInGroup(country, customGroups);
       const keyFetchPromises = keysToEnsureFetched.map(this.ensureKeyFetched);
 
       return Promise.all(keyFetchPromises).then(() => {
-        populateAllDataWithGroups(allData, country);
+        populateAllDataWithGroups(allData, country, customGroups);
         this.forceUpdate();
       });
     }
@@ -232,22 +232,10 @@ class RegionSelect extends ReactQueryParams {
 
   clickCountry = (reg, hasChildren) => () => {
     this.setQueryParamsWrapper({ country: reg, state: '', county: '' });
-    // hasChildren &&
-    //   importRegion(reg).then(() => {
-    //     console.log('finished loading reg');
-    //     this.forceUpdate();
-    //   });
   };
 
   clickState = (reg, hasChildren) => () => {
-    // const { country } = this.queryParams;
-    // const stateId = mergeKeys(country, reg);
     this.setQueryParamsWrapper({ state: reg, county: '' });
-    // hasChildren &&
-    //   importRegion(stateId).then(() => {
-    //     console.log('finished loading reg');
-    //     this.forceUpdate();
-    //   });
   };
 
   clickCounty = (reg) => () => {
@@ -314,6 +302,15 @@ class RegionSelect extends ReactQueryParams {
     this.setQueryParams({ groupsSelected });
   };
 
+  createCustomGroup = (newGroup) => {
+    const { customGroups } = fixQueryParams(this.queryParams);
+    const newCustomGroups = { ...customGroups, ...newGroup };
+    console.log('newCustomGroups', newCustomGroups);
+    this.setQueryParams({
+      customGroups: encodeURI(JSON.stringify(newCustomGroups)),
+    });
+  };
+
   render() {
     const {
       country,
@@ -329,6 +326,7 @@ class RegionSelect extends ReactQueryParams {
       graphA,
       graphB,
       groupsSelected,
+      customGroups,
     } = fixQueryParams(this.queryParams);
 
     const stateId = state ? mergeKeys(country, state) : '';
@@ -376,7 +374,8 @@ class RegionSelect extends ReactQueryParams {
       );
     }
 
-    const selectedGroups = getSelectedGroups(groupsSelected);
+    const selectedGroups = getSelectedGroups(groupsSelected, customGroups);
+    console.log(selectedGroups, selectedGroups);
 
     const graphOptionsWidth = 250;
     const graphOptions = [
@@ -414,6 +413,9 @@ class RegionSelect extends ReactQueryParams {
       changeStartType: this.changeStartType,
       groupsSelected,
       changeGroupsSelected: this.changeGroupsSelected,
+      allData,
+      ensureCountryStateFetched: this.ensureCountryStateFetched,
+      createCustomGroup: this.createCustomGroup,
     };
 
     return (

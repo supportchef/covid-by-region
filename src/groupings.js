@@ -30,7 +30,7 @@ export const getSelectedGroups = (selectedGroups, customGroups) => {
       filteredGroups[groupKey] = allGroups[groupKey];
     }
   });
-  return filteredGroups;
+  return { ...filteredGroups, ...customGroups };
 };
 
 export const getKeysInGroup = (groupKey, customGroups) => {

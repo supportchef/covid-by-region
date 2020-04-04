@@ -42,6 +42,7 @@ const Region = styled.div`
   user-select: none;
   padding-left: 8px;
   display: flex;
+  align-items: center;
   justify-content: space-between;
 `;
 const MainText = styled.span``;
@@ -78,6 +79,7 @@ class RegionSelect extends Component {
       showAll,
       showJhu,
       groupOptions,
+      extraRegionInfo,
     } = this.props;
 
     const { filter } = this.state;
@@ -136,7 +138,9 @@ class RegionSelect extends Component {
             >
               <MainText>All</MainText>
               <CaseNumbers>
-                {formatNumber(allRegion.confirm)}
+                {extraRegionInfo
+                  ? extraRegionInfo(allRegion.sub)
+                  : formatNumber(allRegion.confirm)}
                 <Caret />
               </CaseNumbers>
             </Region>
@@ -164,7 +168,9 @@ class RegionSelect extends Component {
             >
               <MainText>{region.sub}</MainText>
               <CaseNumbers>
-                {formatNumber(region.confirm)}
+                {extraRegionInfo
+                  ? extraRegionInfo(region.sub)
+                  : formatNumber(region.confirm)}
                 <Caret>{hasChildren(region.sub) ? '▶' : ''}</Caret>
               </CaseNumbers>
             </Region>

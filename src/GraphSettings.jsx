@@ -5,6 +5,7 @@ import styled from '@emotion/styled';
 import React, { Component } from 'react';
 import moment from 'moment';
 import { staticGroupings, groupingToRegularName } from './groupings';
+import CreateCustomGrouping from './Groupings/CreateCustomGrouping';
 import Button from 'antd/lib/button';
 import Checkbox from 'antd/lib/checkbox';
 import Modal from 'antd/lib/modal';
@@ -80,11 +81,20 @@ class GraphSettings extends Component {
     this.state = {
       // deviceSelected: false,
       graphSettingsVisible: false,
+      customGroupingVisible: false,
     };
   }
 
   setAdvancedOverlay = (graphSettingsVisible) => () => {
     this.setState({ graphSettingsVisible });
+  };
+
+  setCustomGrouping = (customGroupingVisible) => () => {
+    this.setState({ customGroupingVisible });
+  };
+
+  setCustomGrouping = (customGroupingVisible) => () => {
+    this.setState({ customGroupingVisible });
   };
 
   render() {
@@ -102,8 +112,11 @@ class GraphSettings extends Component {
       changeStartType,
       groupsSelected,
       changeGroupsSelected,
+      allData,
+      ensureCountryStateFetched,
+      createCustomGroup,
     } = this.props;
-    const { graphSettingsVisible } = this.state;
+    const { graphSettingsVisible, customGroupingVisible } = this.state;
 
     const isStartFromNumberOfCases = startValue !== null;
 
@@ -186,7 +199,7 @@ class GraphSettings extends Component {
                   value={startDate}
                 />
               </Form.Item>
-              <Form.Item label="Custom groupings">
+              <Form.Item label="Predefined groupings">
                 <Select
                   mode="multiple"
                   value={groupsSelected}
@@ -200,6 +213,29 @@ class GraphSettings extends Component {
                   ))}
                 </Select>
               </Form.Item>
+              <Button
+                block
+                type="primary"
+                onClick={this.setCustomGrouping(true)}
+              >
+                Create Custom Group
+              </Button>
+              <Modal
+                title={`Create Custom Group`}
+                visible={!!customGroupingVisible}
+                onOk={this.setCustomGrouping(false)}
+                onCancel={this.setCustomGrouping(false)}
+                footer={null}
+                width={648}
+                destroyOnClose
+              >
+                <CreateCustomGrouping
+                  allData={allData}
+                  createCustomGroup={createCustomGroup}
+                  ensureCountryStateFetched={ensureCountryStateFetched}
+                  closeModal={this.setCustomGrouping(false)}
+                />
+              </Modal>
             </Form>
           </AlteredForm>
         </Modal>
