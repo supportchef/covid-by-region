@@ -1,7 +1,6 @@
 {
   "name": "covid-by-region",
   "version": "0.1.0",
-  "private": true,
   "dependencies": {
     "@emotion/core": "^10.0.28",
     "@emotion/styled": "^10.0.27",
@@ -28,6 +27,7 @@
     "build": "react-app-rewired build",
     "test": "react-app-rewired test",
     "deploy": "npm run build && aws s3 sync build s3://www.covidbyregion.com --profile supportchef-prod",
+    "deploy-noprofile": "npm run build && aws s3 sync build s3://www.covidbyregion.com",
     "eject": "react-scripts eject"
   },
   "eslintConfig": {
