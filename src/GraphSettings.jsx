@@ -81,7 +81,7 @@ class GraphSettings extends Component {
     this.state = {
       // deviceSelected: false,
       graphSettingsVisible: false,
-      customGroupingVisisble: false,
+      customGroupingVisible: false,
     };
   }
 
@@ -89,8 +89,12 @@ class GraphSettings extends Component {
     this.setState({ graphSettingsVisible });
   };
 
-  setCustomGrouping = (customGroupingVisisble) => () => {
-    this.setState({ customGroupingVisisble });
+  setCustomGrouping = (customGroupingVisible) => () => {
+    this.setState({ customGroupingVisible });
+  };
+
+  setCustomGrouping = (customGroupingVisible) => () => {
+    this.setState({ customGroupingVisible });
   };
 
   render() {
@@ -110,8 +114,9 @@ class GraphSettings extends Component {
       changeGroupsSelected,
       allData,
       ensureCountryStateFetched,
+      createCustomGroup,
     } = this.props;
-    const { graphSettingsVisible, customGroupingVisisble } = this.state;
+    const { graphSettingsVisible, customGroupingVisible } = this.state;
 
     const isStartFromNumberOfCases = startValue !== null;
 
@@ -194,7 +199,7 @@ class GraphSettings extends Component {
                   value={startDate}
                 />
               </Form.Item>
-              <Form.Item label="Custom groupings">
+              <Form.Item label="Predefined groupings">
                 <Select
                   mode="multiple"
                   value={groupsSelected}
@@ -208,21 +213,27 @@ class GraphSettings extends Component {
                   ))}
                 </Select>
               </Form.Item>
-              <Button type="primary" onClick={this.setCustomGrouping(true)}>
+              <Button
+                block
+                type="primary"
+                onClick={this.setCustomGrouping(true)}
+              >
                 Create Custom Group
               </Button>
               <Modal
                 title={`Create Custom Group`}
-                visible={!!customGroupingVisisble}
+                visible={!!customGroupingVisible}
                 onOk={this.setCustomGrouping(false)}
                 onCancel={this.setCustomGrouping(false)}
                 footer={null}
-                width={720}
+                width={648}
                 destroyOnClose
               >
                 <CreateCustomGrouping
                   allData={allData}
+                  createCustomGroup={createCustomGroup}
                   ensureCountryStateFetched={ensureCountryStateFetched}
+                  closeModal={this.setCustomGrouping(false)}
                 />
               </Modal>
             </Form>

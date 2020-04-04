@@ -75,7 +75,24 @@ class RegionSelect extends Component {
     this.setState({ county: reg });
   };
 
-  createCustomGroup = (reg) => () => {};
+  internalCreateCustomGroup = () => {
+    const { createCustomGroup, closeModal } = this.props;
+    const { customGroupName, add, subtract } = this.state;
+
+    const safeGroupName = `!${
+      customGroupName ? customGroupName : 'Undefined New Group'
+    }`;
+
+    const newGroup = {
+      [safeGroupName]: {
+        add,
+        subtract,
+      },
+    };
+
+    createCustomGroup(newGroup);
+    closeModal();
+  };
 
   addToArray = (isAdd, regionKey) => () => {
     this.setState((state) => {
@@ -165,8 +182,8 @@ class RegionSelect extends Component {
             extraRegionInfo={generatePlusMinus(stateId)}
           ></RegionColumn>
         </RegionContainer>
-
-        <Button type="primary" onClick={this.createCustomGroup}>
+        <br />
+        <Button block type="primary" onClick={this.internalCreateCustomGroup}>
           Create your Custom Group
         </Button>
       </div>

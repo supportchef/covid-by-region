@@ -138,7 +138,9 @@ class RegionSelect extends Component {
             >
               <MainText>All</MainText>
               <CaseNumbers>
-                {formatNumber(allRegion.confirm)}
+                {extraRegionInfo
+                  ? extraRegionInfo(allRegion.sub)
+                  : formatNumber(allRegion.confirm)}
                 <Caret />
               </CaseNumbers>
             </Region>
