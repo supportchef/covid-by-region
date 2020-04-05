@@ -23,14 +23,17 @@ jobs:
           submodules: 'recursive'
 
       - run: git submodule update --remote
+      - run: echo "::set-env name=noDiffs::$(git diff-index --quiet HEAD --)"
 
       - name: Commit files
+        if: env.noDiffs == 'false'
         run: |
           git config --local user.email "bot@supportchef.com"
           git config --local user.name "Covid Update Bot"
           git commit -m "Updating datasets" -a
 
       - name: Push changes
+        if: env.noDiffs == 'false'
         uses: ad-m/github-push-action@master
         with:
           github_token: ${{ secrets.COVID_BOT_GITHUB_TOKEN }}
