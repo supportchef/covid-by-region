@@ -26,14 +26,14 @@ jobs:
       - run: echo "::set-env name=noDiffs::$(git diff-index --quiet HEAD --)"
 
       - name: Commit files
-        if: env.noDiffs == 'false'
+        if: env.noDiffs == 1
         run: |
           git config --local user.email "bot@supportchef.com"
           git config --local user.name "Covid Update Bot"
           git commit -m "Updating datasets" -a
 
       - name: Push changes
-        if: env.noDiffs == 'false'
+        if: env.noDiffs == 1
         uses: ad-m/github-push-action@master
         with:
           github_token: ${{ secrets.COVID_BOT_GITHUB_TOKEN }}
