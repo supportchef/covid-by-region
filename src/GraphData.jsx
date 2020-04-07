@@ -172,6 +172,8 @@ const getDatasetData = (thisData, xAxis, fieldName, isLog) => {
 
   // Sort by time
   const sortedData = data.sort((date1, date2) => date1.x - date2.x);
+
+  // console.log('sortedData', sortedData);
   return sortedData;
 };
 
@@ -235,6 +237,7 @@ const getData = (
   });
 
   const xAxis = getXAxis(cleanedDataKeyed, isStartValue);
+  // console.log('xAxis', xAxis);
 
   const colorIndex = showSingleColor ? 0 : graphIndex;
 
@@ -242,7 +245,10 @@ const getData = (
   return {
     labels: xAxis,
     datasets: seriesInfoSafe.map(([key, info]) => ({
-      label: info.label || getNameFromKey(key),
+      // We need to add the length to this because if we don't, then
+      // if the length changes between two sets with multiple points, everything will crash
+      // (eg: Santa Clara pined and NZ selected will consistently crash on reload without this)
+      label: `${getNameFromKey(key)} len(${xAxis.length})`,
       fill: false,
       lineTension: 0.1,
       backgroundColor: `rgba(${getColor(info.color)[colorIndex]},1)`,
