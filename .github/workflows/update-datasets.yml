@@ -21,6 +21,10 @@ jobs:
       - uses: actions/checkout@v2
         with:
           submodules: 'recursive'
+          # NOTE @v2 uses the token as an auth http header. Set it to
+          # a Personal Access Token instead of secrets.GITHUB_TOKEN
+          # so that tag pushes trigger repo push events.
+          token: ${{ secrets.COVID_BOT_GITHUB_TOKEN }}
 
       - run: git submodule update --remote
       - run: echo "::set-env name=noDiffs::$(git diff-index --quiet HEAD --)"
