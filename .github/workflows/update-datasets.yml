@@ -28,6 +28,8 @@ jobs:
 
       - run: git submodule update --remote
       - run: echo "::set-env name=noDiffs::$(git diff-index --quiet HEAD --)"
+        env:
+          ACTIONS_ALLOW_UNSECURE_COMMANDS: 'true'
       - run: echo ${{env.noDiffs}}
 
       - name: Commit files
