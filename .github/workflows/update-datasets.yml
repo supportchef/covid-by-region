@@ -27,20 +27,14 @@ jobs:
           token: ${{ secrets.COVID_BOT_GITHUB_TOKEN }}
 
       - run: git submodule update --remote
-      - run: echo "::set-env name=noDiffs::$(git diff-index --quiet HEAD --)"
-        env:
-          ACTIONS_ALLOW_UNSECURE_COMMANDS: 'true'
-      - run: echo ${{env.noDiffs}}
 
       - name: Commit files
-#         if: env.noDiffs == 1
         run: |
           git config --local user.email "bot@supportchef.com"
           git config --local user.name "Covid Update Bot"
-          git commit -m "Updating datasets" -a
+          git commit -m "Updating datasets" -a || echo "No dataset updates"
 
       - name: Push changes
-#         if: env.noDiffs == 1
         uses: ad-m/github-push-action@master
         with:
           github_token: ${{ secrets.COVID_BOT_GITHUB_TOKEN }}
