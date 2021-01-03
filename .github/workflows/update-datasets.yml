@@ -35,6 +35,7 @@ jobs:
           git commit -m "Updating datasets" -a || echo "No dataset updates"
 
       - name: Push changes
-        uses: ad-m/github-push-action@master
+        uses: ad-m/github-push-action@3a0787a996eb8719f2f4b45c33814870829a1b44
         with:
           github_token: ${{ secrets.COVID_BOT_GITHUB_TOKEN }}
+          branch: master
