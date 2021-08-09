@@ -147,8 +147,6 @@ const getNextPair = (data, xTick) => {
 };
 
 const getDatasetData = (thisData, xAxis, fieldName, isLog) => {
-  ensureDataHasFieldName(thisData, fieldName);
-
   // Map to x + y cooridinates
   const data = thisData.map((row) => ({ y: row[fieldName], x: row.t }));
 
@@ -208,6 +206,10 @@ const getData = (
         return { ...row, t: new Date(year, month - 1, day) };
       })
       .reverse();
+
+    // This also computes relative data (i.e. New Cases per day) so compute those values before
+    // trimming by `startDate`.
+    ensureDataHasFieldName(cleanedData, fieldName);
 
     // Filter out results before a certain date
     if (startDate) {
