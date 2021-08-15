@@ -142,9 +142,7 @@ class RegionSelect extends ReactQueryParams {
       pinnedKeys: encodeURI(JSON.stringify([])),
       isLog: false,
       showJhu: false,
-      startDate: null,
-      startValue: null,
-      startType: '',
+      ...this.startOptionDefaults(),
       groupsSelected: [],
       customGroups: {},
 
@@ -284,16 +282,36 @@ class RegionSelect extends ReactQueryParams {
     this.setQueryParams({ showJhu: !showJhu });
   };
 
+  startOptionDefaults = () => {
+    return {
+      startDate: null,
+      startValue: null,
+      startType: '',
+      lastNDays: 0,
+    };
+  };
+
+  changeStartOption = (option) => {
+    this.setQueryParams({
+      ...this.startOptionDefaults(),
+      ...option,
+    });
+  };
+
   changeStartDate = (startDate) => {
-    this.setQueryParams({ startDate });
+    this.changeStartOption({ startDate });
   };
 
   changeStartValue = (startValue) => {
-    this.setQueryParams({ startValue });
+    this.changeStartOption({ startValue });
   };
 
   changeStartType = (startType) => {
-    this.setQueryParams({ startType });
+    this.changeStartOption({ startType });
+  };
+
+  changeLastNDays = (lastNDays) => {
+    this.changeStartOption({ lastNDays });
   };
 
   changeGraphType = (graphKey) => (newType) => {
@@ -325,6 +343,7 @@ class RegionSelect extends ReactQueryParams {
       startDate,
       startValue,
       startType,
+      lastNDays,
       graphA,
       graphB,
       groupsSelected,
@@ -399,6 +418,7 @@ class RegionSelect extends ReactQueryParams {
       startDate,
       startValue,
       startType,
+      lastNDays,
       selectedGroups,
     };
 
@@ -413,6 +433,8 @@ class RegionSelect extends ReactQueryParams {
       changeStartValue: this.changeStartValue,
       startType: startType,
       changeStartType: this.changeStartType,
+      lastNDays: lastNDays,
+      changeLastNDays: this.changeLastNDays,
       groupsSelected,
       changeGroupsSelected: this.changeGroupsSelected,
       allData,

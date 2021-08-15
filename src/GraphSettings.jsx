@@ -110,6 +110,8 @@ class GraphSettings extends Component {
       mobileTitle,
       startType,
       changeStartType,
+      lastNDays,
+      changeLastNDays,
       groupsSelected,
       changeGroupsSelected,
       allData,
@@ -198,6 +200,14 @@ class GraphSettings extends Component {
                   onChange={changeStartDate}
                   value={startDate}
                 />
+              </Form.Item>
+              <Form.Item label="Show data from the last # days">
+                <InputNumber
+                    min={0}
+                    value={lastNDays}
+                    onChange={changeLastNDays}
+                    formatter={(value) => value.toString() === "0" ? "" : value}
+                  />
               </Form.Item>
               <Form.Item label="Predefined groupings">
                 <Select
