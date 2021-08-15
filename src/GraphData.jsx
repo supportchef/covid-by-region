@@ -182,6 +182,7 @@ const getData = (
   showSingleColor,
   startDate,
   startValue,
+  lastNDays,
   isLog,
   startType,
   graphIndex
@@ -215,6 +216,12 @@ const getData = (
     if (startDate) {
       cleanedData = cleanedData.filter(
         (row) => row.t > startDate.clone().subtract(1, 'days')
+      );
+    }
+
+    if (lastNDays) {
+      cleanedData = cleanedData.filter(
+        (row) => row.t > moment().subtract(lastNDays, 'days')
       );
     }
 
@@ -286,6 +293,7 @@ export default class GraphData extends PureComponent {
       startDate,
       startValue,
       startType,
+      lastNDays,
       graphIndex,
     } = this.props;
 
@@ -298,6 +306,7 @@ export default class GraphData extends PureComponent {
       showSingleColor,
       startDate,
       startValue,
+      lastNDays,
       isLog,
       safeStartType,
       graphIndex
