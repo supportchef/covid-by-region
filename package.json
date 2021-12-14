@@ -21,7 +21,7 @@
     "recharts": "^1.8.5"
   },
   "scripts": {
-    "generate": "cd timeseriesScripts && node ./createTimeseries.js && cd ..",
+    "generate": "cd timeseriesScripts && node --max-old-space-size=8192 ./createTimeseries.js && cd ..",
     "updateData": "git submodule update --remote && npm run generate",
     "start": "react-app-rewired start",
     "build": "react-app-rewired build",
