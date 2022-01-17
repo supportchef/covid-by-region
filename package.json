@@ -24,7 +24,7 @@
     "generate": "cd timeseriesScripts && node --max-old-space-size=8192 ./createTimeseries.js && cd ..",
     "updateData": "git submodule update --remote && npm run generate",
     "start": "react-app-rewired start",
-    "build": "react-app-rewired build",
+    "build": "node --max_old_space_size=8192 node_modules/.bin/react-app-rewired build",
     "test": "react-app-rewired test",
     "deploy": "npm run build && aws s3 sync build s3://www.covidbyregion.com --profile supportchef-covid-bot",
     "deploy-noprofile": "npm run build && aws s3 sync build s3://www.covidbyregion.com",
